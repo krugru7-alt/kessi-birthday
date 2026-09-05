@@ -2108,6 +2108,78 @@ const flash = new Graphics()
 flash.alpha = 0;
 sunsetScene.addChild(flash);
 
+// Превью ТОГО САМОГО фото после нажатия на камеру.
+// Никакой перерисовки, никакого crop — показываем весь файл целиком.
+const takenPhotoPreview = new Container();
+takenPhotoPreview.position.set(W / 2, 410);
+takenPhotoPreview.alpha = 0;
+takenPhotoPreview.scale.set(0.72);
+takenPhotoPreview.visible = false;
+sunsetScene.addChild(takenPhotoPreview);
+
+const takenPhotoPaper = new Graphics()
+  .roundRect(-142, -155, 284, 310, 12)
+  .fill(0xf8f2ee)
+  .stroke({ width: 1.3, color: 0xd9c6c2, alpha: 0.8 });
+takenPhotoPreview.addChild(takenPhotoPaper);
+
+if (ourPhotoTexture) {
+  const exactTakenPhoto = new Sprite(ourPhotoTexture);
+  exactTakenPhoto.anchor.set(0.5);
+
+  // Вписываем ВСЁ фото внутрь рамки, сохраняя исходные пропорции.
+  // Ничего не режем по краям.
+  const maxPhotoW = 262;
+  const maxPhotoH = 205;
+  const containScale = Math.min(
+    maxPhotoW / exactTakenPhoto.texture.width,
+    maxPhotoH / exactTakenPhoto.texture.height
+  );
+
+  exactTakenPhoto.scale.set(containScale);
+  exactTakenPhoto.position.set(0, -34);
+  takenPhotoPreview.addChild(exactTakenPhoto);
+} else {
+  const missingPhoto = new Text({
+    text: "Фото не найдено",
+    style: {
+      fill: 0x6a4d58,
+      fontFamily: "Arial",
+      fontSize: 18,
+      fontWeight: "700",
+    },
+  });
+  missingPhoto.anchor.set(0.5);
+  missingPhoto.position.set(0, -35);
+  takenPhotoPreview.addChild(missingPhoto);
+}
+
+const takenPhotoCaption = new Text({
+  text: "Мы ♡",
+  style: {
+    fill: 0x2d2027,
+    fontFamily: "Arial",
+    fontSize: 26,
+    fontWeight: "800",
+  },
+});
+takenPhotoCaption.anchor.set(0, 0.5);
+takenPhotoCaption.position.set(-119, 104);
+takenPhotoPreview.addChild(takenPhotoCaption);
+
+const takenPhotoDate = new Text({
+  text: "05.09.2026",
+  style: {
+    fill: 0x49343d,
+    fontFamily: "Arial",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+});
+takenPhotoDate.anchor.set(1, 0.5);
+takenPhotoDate.position.set(119, 104);
+takenPhotoPreview.addChild(takenPhotoDate);
+
 let photoTaken = false;
 
 function showSunsetScene() {
@@ -2142,24 +2214,50 @@ cameraButton.on("pointertap", () => {
 
   const tl = gsap.timeline();
 
+  // щелчок камеры
   tl.to(flash, { alpha: 0.95, duration: 0.08 });
-  tl.to(flash, { alpha: 0, duration: 0.35 });
+  tl.to(flash, { alpha: 0, duration: 0.38 });
 
   tl.call(() => {
     cameraText.text = "сохранил ♡";
-  }, null, 0.3);
 
-  tl.to(cameraButton.scale, {
-    x: 1.06,
-    y: 1.06,
-    duration: 0.18,
-    repeat: 1,
-    yoyo: true,
-  }, 0.32);
+    // показываем именно присланное фото
+    takenPhotoPreview.visible = true;
+  }, null, 0.32);
+
+  // Фото мягко появляется поверх закатной сцены
+  tl.to(takenPhotoPreview, {
+    alpha: 1,
+    duration: 0.75,
+    ease: "power2.out",
+  }, 0.42);
+
+  tl.to(takenPhotoPreview.scale, {
+    x: 1,
+    y: 1,
+    duration: 0.8,
+    ease: "back.out(1.15)",
+  }, 0.42);
+
+  tl.to(cameraButton, {
+    alpha: 0,
+    duration: 0.4,
+  }, 0.45);
+
+  // даём реально посмотреть фотографию
+  tl.to({}, { duration: 3.3 });
+
+  // затем аккуратно убираем её и идём в кино
+  tl.to(takenPhotoPreview, {
+    alpha: 0,
+    y: 392,
+    duration: 0.65,
+    ease: "power2.in",
+  });
 
   tl.call(() => {
     showCinemaScene();
-  }, null, 1.5);
+  });
 });
 
 // =====================================================
@@ -2774,24 +2872,25 @@ if (ourPhotoTexture) {
   const realPhoto = new Sprite(ourPhotoTexture);
   realPhoto.anchor.set(0.5);
 
-  const photoW = 228;
-  const photoH = 212;
+  // Показываем ИСХОДНОЕ фото полностью.
+  // contain вместо cover: никаких обрезанных лиц, рук или Дракоши.
+  const maxPhotoW = 228;
+  const maxPhotoH = 178;
 
-  const coverScale = Math.max(
-    photoW / realPhoto.texture.width,
-    photoH / realPhoto.texture.height
+  const containScale = Math.min(
+    maxPhotoW / realPhoto.texture.width,
+    maxPhotoH / realPhoto.texture.height
   );
 
-  realPhoto.scale.set(coverScale);
-  realPhoto.position.set(0, -45);
+  realPhoto.scale.set(containScale);
+  realPhoto.position.set(0, -52);
 
-  // Маска делает аккуратное заполнение фоторамки без растягивания изображения.
-  const photoMask = new Graphics()
-    .roundRect(-114, -151, photoW, photoH, 7)
-    .fill(0xffffff);
+  // тёмная подложка только заполняет свободное место рамки
+  const photoBackdrop = new Graphics()
+    .roundRect(-114, -141, 228, 178, 7)
+    .fill(0x171319);
 
-  photoWindow.addChild(realPhoto, photoMask);
-  realPhoto.mask = photoMask;
+  photoWindow.addChild(photoBackdrop, realPhoto);
 } else {
   // Резервный вариант
   const backupSky = new Graphics()
@@ -2834,7 +2933,7 @@ const photoLabel = new Text({
   },
 });
 photoLabel.anchor.set(0, 0.5);
-photoLabel.position.set(-102, 91);
+photoLabel.position.set(-102, 67);
 photoCard.addChild(photoLabel);
 
 const photoDate = new Text({
@@ -2847,12 +2946,12 @@ const photoDate = new Text({
   },
 });
 photoDate.anchor.set(1, 0.5);
-photoDate.position.set(103, 91);
+photoDate.position.set(103, 67);
 photoCard.addChild(photoDate);
 
 // Тонкая декоративная линия — отделяет фото от текста и делает подпись заметнее.
 const photoDivider = new Graphics()
-  .roundRect(-103, 108, 206, 2, 1)
+  .roundRect(-103, 86, 206, 2, 1)
   .fill({ color: 0x7a5364, alpha: 0.24 });
 photoCard.addChild(photoDivider);
 
@@ -2870,7 +2969,7 @@ const photoPhrase = new Text({
   },
 });
 photoPhrase.anchor.set(0.5);
-photoPhrase.position.set(0, 137);
+photoPhrase.position.set(0, 116);
 photoCard.addChild(photoPhrase);
 
 let finalOpened = false;
