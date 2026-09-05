@@ -1448,7 +1448,7 @@ flavors.forEach((color, i) => {
   item.x = -102 + i * 34;
   item.y = -68;
 
-  const iceNeonConeShape = new Graphics()
+  const flavorCone = new Graphics()
     .moveTo(-8, 11)
     .lineTo(8, 11)
     .lineTo(0, 40)
@@ -1466,7 +1466,7 @@ flavors.forEach((color, i) => {
       alpha: 0.28,
     });
 
-  item.addChild(cone, scoop, shine);
+  item.addChild(flavorCone, scoop, shine);
   kiosk.addChild(item);
   flavorItems.push(item);
 });
