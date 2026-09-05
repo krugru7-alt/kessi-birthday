@@ -464,7 +464,7 @@ async function start() {
   quoteScene.addChild(quote1);
 
   const quote2 = new Text({
-    text: "Так что несколько километров -\nвообще ерундень.",
+    text: "Так что несколько километров \nвообще ерундень.",
     style: {
       fill: 0xf4c7d7,
       fontFamily: "Arial",
@@ -1067,12 +1067,11 @@ walkHintBg.alpha = 0;
 park.addChild(walkHintBg);
 
 const walkHint = new Text({
-  text: "Ручку? пойдем ♡",
+  text: "Ручку? Пойдём ♡",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
     fontSize: 17,
-    fontWeight: "700",
     fontWeight: "700",
     letterSpacing: 0.5,
   },
@@ -1613,7 +1612,7 @@ const bubbleTail = new Graphics()
   });
 
 const bubbleText = new Text({
-  text: "А мне,але",
+  text: "А мне, алё?",
   style: {
     fill: 0x2a2026,
     fontFamily: "Arial",
@@ -2134,7 +2133,7 @@ const cameraBg = new Graphics()
   .stroke({ width: 1, color: 0xf3c3d4, alpha: 0.55 });
 
 const cameraText = new Text({
-  text: "📷  щелк на память",
+  text: "📷  щёлк на память",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
@@ -2211,7 +2210,7 @@ takenPhotoCaption.position.set(-119, 104);
 takenPhotoPreview.addChild(takenPhotoCaption);
 
 const takenPhotoDate = new Text({
-  text: "05.09.2026",
+  text: "06.09.2026",
   style: {
     fill: 0x49343d,
     fontFamily: "Arial",
@@ -2526,7 +2525,7 @@ cinemaHintBg.position.set(W / 2, 746);
 cinemaScene.addChild(cinemaHintBg);
 
 const cinemaHint = new Text({
-  text: "ручку,пойдем  ›",
+  text: "Ручку? Пойдём  ›",
   style: {
     fill: 0xffffff,
     fontSize: 17,
@@ -2774,7 +2773,7 @@ nightDragon.root.scale.set(0.72);
 nightScene.addChild(nightKessi.root, nightObsid.root, nightDragon.root);
 
 const nightText1 = new Text({
-  text: "Когда я приеду этот проект будет реализован)",
+  text: "Когда я приеду, этот проект будет реализован :)",
   style: {
     fill: 0xffffff,
     fontSize: 21,
@@ -2984,7 +2983,7 @@ photoLabel.position.set(-102, 67);
 photoCard.addChild(photoLabel);
 
 const photoDate = new Text({
-  text: "05.09.2026",
+  text: "06.09.2026",
   style: {
     fill: 0x49333d,
     fontFamily: "Arial",
@@ -3003,7 +3002,7 @@ const photoDivider = new Graphics()
 photoCard.addChild(photoDivider);
 
 const photoPhrase = new Text({
-  text: "Первую пока пришлось нарисовать.\\nОстальные не отвертишься, придется фоткаться",
+  text: "Первую уже сохранили.\\nОстальные - не отвертишься, придётся фоткаться ♡",
   style: {
     fill: 0x5c3a49,
     fontFamily: "Arial",
@@ -3332,8 +3331,8 @@ birthdayScene.addChild(finaleTitle);
 
 const finaleText1 = new Text({
   text:
-    "Пусть этот интерактив подарит тебе улыбку\n" +
-    "а глазки испытают эстетику,\n",
+    "Пусть этот интерактив подарит тебе улыбку,\n" +
+    "а глазки порадуются эстетике.\n",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
