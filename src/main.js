@@ -1995,6 +1995,49 @@ for (let i = 0; i < 24; i++) {
 const sunsetClouds = new Container();
 sunsetScene.addChild(sunsetClouds);
 
+const sunsetDreamGlow = new Graphics()
+  .circle(W / 2, 410, 210)
+  .fill({ color: 0xffb8c9, alpha: 0.025 });
+sunsetScene.addChild(sunsetDreamGlow);
+
+gsap.to(sunsetDreamGlow, {
+  alpha: 0.06,
+  duration: 3.2,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+const sunsetHeartBokeh = new Container();
+sunsetScene.addChild(sunsetHeartBokeh);
+
+for (let i = 0; i < 8; i++) {
+  const bh = new Text({
+    text: "♡",
+    style: {
+      fill: 0xffd0dc,
+      fontFamily: "Arial",
+      fontSize: 8 + Math.random() * 7,
+    },
+  });
+  bh.anchor.set(0.5);
+  bh.alpha = 0.08 + Math.random() * 0.12;
+  bh.position.set(
+    20 + Math.random() * (W - 40),
+    280 + Math.random() * 300
+  );
+  sunsetHeartBokeh.addChild(bh);
+
+  gsap.to(bh, {
+    alpha: 0.02,
+    y: bh.y - 18 - Math.random() * 30,
+    duration: 4 + Math.random() * 3,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+}
+
 [
   [80, 235, 0.9],
   [235, 185, 0.65],
@@ -2531,6 +2574,19 @@ const hallScene = new Container();
 hallScene.visible = false;
 hallScene.alpha = 0;
 world.addChild(hallScene);
+
+const hallWarmGlow = new Graphics()
+  .circle(W / 2, 530, 210)
+  .fill({ color: 0xd86f91, alpha: 0.035 });
+hallScene.addChild(hallWarmGlow);
+
+gsap.to(hallWarmGlow, {
+  alpha: 0.075,
+  duration: 3.6,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
 
 const hallBg = new Graphics()
   .rect(0, 0, W, H).fill(0x06060b);
@@ -3271,7 +3327,7 @@ gsap.to(finaleHeart, {
 const finaleTitle = new Text({
   text: "С днём рождения, Даш. ♡",
   style: {
-    fill: 0xffe3ed,
+    fill: 0xffe7ef,
     fontFamily: "Arial",
     fontSize: 28,
     fontWeight: "700",
@@ -3309,7 +3365,7 @@ const finaleText2 = new Text({
     "было много моментов,\n" +
     "которые захочется запомнить.",
   style: {
-    fill: 0xf6dce5,
+    fill: 0xf9e2e9,
     fontFamily: "Arial",
     fontSize: 16,
     align: "center",
@@ -3371,6 +3427,73 @@ finaleSmall.anchor.set(0.5);
 finaleSmall.position.set(W / 2, 720);
 finaleSmall.alpha = 0;
 birthdayScene.addChild(finaleSmall);
+
+
+// =====================================================
+// МНОГО ПОЦЕЛУЙЧИКОВ ДЛЯ КЭССИ
+// Они появляются только в самом финале, чтобы это было как сюрприз.
+// =====================================================
+
+const kissesLayer = new Container();
+birthdayScene.addChild(kissesLayer);
+
+const kissSymbols = ["♡", "♡", "💋", "чмок", "♡", "💋", "♡"];
+
+const kissItems = [];
+
+for (let i = 0; i < 34; i++) {
+  const symbol = kissSymbols[i % kissSymbols.length];
+
+  const kiss = new Text({
+    text: symbol,
+    style: {
+      fill:
+        i % 4 === 0
+          ? 0xff9fbd
+          : i % 4 === 1
+          ? 0xffd3df
+          : i % 4 === 2
+          ? 0xffc19f
+          : 0xffffff,
+      fontFamily: "Arial",
+      fontSize:
+        symbol === "чмок"
+          ? 11 + (i % 3)
+          : 13 + (i % 5) * 2,
+      fontWeight: symbol === "чмок" ? "700" : "600",
+    },
+  });
+
+  kiss.anchor.set(0.5);
+  kiss.alpha = 0;
+  kiss.scale.set(0.55);
+
+  kiss.position.set(
+    30 + Math.random() * (W - 60),
+    700 + Math.random() * 120
+  );
+
+  kiss.rotation = -0.18 + Math.random() * 0.36;
+
+  kissesLayer.addChild(kiss);
+  kissItems.push(kiss);
+}
+
+// маленькая подпись перед "поцелуйным дождём"
+const kissCaption = new Text({
+  text: "и ещё немного бусек тебе ♡",
+  style: {
+    fill: 0xffd7e4,
+    fontFamily: "Arial",
+    fontSize: 16,
+    fontWeight: "600",
+    align: "center",
+  },
+});
+kissCaption.anchor.set(0.5);
+kissCaption.position.set(W / 2, 665);
+kissCaption.alpha = 0;
+birthdayScene.addChild(kissCaption);
 
 function showBirthdayFinale() {
   birthdayScene.visible = true;
@@ -3443,6 +3566,63 @@ function showBirthdayFinale() {
     alpha: 0.75,
     duration: 1.2,
   }, "-=0.25");
+
+  // маленькая пауза перед последним сюрпризом
+  tl.to({}, { duration: 1.2 });
+
+  tl.to(kissCaption, {
+    alpha: 1,
+    y: 654,
+    duration: 0.8,
+    ease: "power2.out",
+  });
+
+  // поцелуйчики летят снизу вверх вокруг троих
+  tl.call(() => {
+    kissItems.forEach((kiss, index) => {
+      const startX = 26 + Math.random() * (W - 52);
+      const startY = 760 + Math.random() * 80;
+
+      kiss.position.set(startX, startY);
+      kiss.alpha = 0;
+      kiss.scale.set(0.45);
+
+      gsap.timeline({
+        delay: index * 0.055 + Math.random() * 0.45,
+      })
+        .to(kiss, {
+          alpha: 0.9,
+          duration: 0.25,
+        })
+        .to(kiss.scale, {
+          x: 0.9 + Math.random() * 0.45,
+          y: 0.9 + Math.random() * 0.45,
+          duration: 0.45,
+          ease: "back.out(1.5)",
+        }, "<")
+        .to(kiss, {
+          y: startY - 150 - Math.random() * 220,
+          x: startX + (-55 + Math.random() * 110),
+          rotation: kiss.rotation + (-0.2 + Math.random() * 0.4),
+          duration: 3.4 + Math.random() * 2.2,
+          ease: "sine.out",
+        }, "<")
+        .to(kiss, {
+          alpha: 0,
+          duration: 1.1,
+        }, "-=1.1");
+    });
+  });
+
+  // лёгкий общий импульс сердечка между героями
+  tl.to(finaleHeart.scale, {
+    x: 1.35,
+    y: 1.35,
+    duration: 0.35,
+    repeat: 1,
+    yoyo: true,
+    ease: "sine.inOut",
+  }, "+=0.3");
 
   // очень мягкое финальное дыхание сцены
   tl.to([cityGlowA, cityGlowB], {
