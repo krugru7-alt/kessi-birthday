@@ -10,6 +10,10 @@ import {
 
 import { gsap } from "gsap";
 
+// Спокойный кинематографичный темп всего подарка
+// 0.70 = примерно на 43% медленнее исходной версии.
+gsap.globalTimeline.timeScale(0.70);
+
 const app = new Application();
 
 const W = 390;
@@ -1239,280 +1243,298 @@ const kioskGroundGlow = new Graphics()
 
 iceCreamScene.addChild(kioskGroundGlow);
 
-// киоск
+// киоск — цельная детальная сцена
 const kiosk = new Container();
-kiosk.position.set(195, 400);
+kiosk.position.set(W / 2, 405);
 iceCreamScene.addChild(kiosk);
 
-  // =====================================================
-  // ДЕТАЛИ КИОСКА — свет, банки, меню, неон, полки
-  // =====================================================
+// мягкая тень под киоском
+const kioskShadow = new Graphics()
+  .ellipse(0, 175, 155, 32)
+  .fill({ color: 0x000000, alpha: 0.23 });
+kiosk.addChild(kioskShadow);
 
-  const iceDetailLayer = new Container();
-  iceCreamScene.addChild(iceDetailLayer);
-
-  // гирлянда лампочек
-  for (let i = 0; i < 11; i++) {
-    const bulbX = 78 + i * 24;
-    const bulb = new Graphics()
-      .circle(bulbX, 246, 4)
-      .fill({ color: 0xffd89a, alpha: 0.95 });
-
-    const bulbGlow = new Graphics()
-      .circle(bulbX, 246, 12)
-      .fill({ color: 0xffd28a, alpha: 0.08 });
-
-    iceDetailLayer.addChild(bulbGlow, bulb);
-
-    gsap.to(bulbGlow, {
-      alpha: 0.18,
-      duration: 1.1 + Math.random() * 1.6,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
-  }
-
-  // полки с баночками/топпингами
-  const iceShelfDetail = new Graphics()
-    .roundRect(100, 388, 190, 10, 4)
-    .fill(0x6d4740);
-  iceDetailLayer.addChild(iceShelfDetail);
-
-  const iceJarColors = [
-    0xf3b4c2, 0xf3d28d, 0xa4c8eb, 0xd2a8e8,
-    0xa8d6a2, 0xf0a985, 0xe7c5a9, 0xb8d4cf
-  ];
-
-  iceJarColors.forEach((c, i) => {
-    const x = 108 + i * 22;
-    const jar = new Graphics()
-      .roundRect(x, 358, 14, 27, 4)
-      .fill({ color: c, alpha: 0.86 })
-      .rect(x + 2, 354, 10, 5)
-      .fill(0xd9d0c8);
-
-    iceDetailLayer.addChild(jar);
-  });
-
-  // меловая доска с меню
-  const iceMenuBoard = new Container();
-  iceMenuBoard.position.set(42, 295);
-  iceDetailLayer.addChild(iceMenuBoard);
-
-  const iceMenuBg = new Graphics()
-    .roundRect(0, 0, 92, 152, 10)
-    .fill(0x231f23)
-    .stroke({ width: 1.2, color: 0xc59ea6, alpha: 0.55 });
-
-  iceMenuBoard.addChild(iceMenuBg);
-
-  const iceMenuText = new Text({
-    text:
-      "ВКУСЫ\n\nПломбир\nШоколад\nКлубника\nФисташка\nКарамель\nМанго",
-    style: {
-      fill: 0xf5e4dd,
-      fontFamily: "Arial",
-      fontSize: 11,
-      lineHeight: 18,
-    },
-  });
-  iceMenuText.position.set(10, 10);
-  iceMenuBoard.addChild(iceMenuText);
-
-  // неоновый рожок справа
-  const iceNeonCone = new Container();
-  iceNeonCone.position.set(324, 322);
-  iceDetailLayer.addChild(iceNeonCone);
-
-  const iceNeonConeShape = new Graphics()
-    .moveTo(0, 28)
-    .lineTo(14, 58)
-    .lineTo(28, 28)
-    .closePath()
-    .stroke({ width: 2.3, color: 0xffc18f, alpha: 0.95 });
-
-  const iceNeonScoop = new Graphics()
-    .circle(14, 19, 13)
-    .stroke({ width: 2.4, color: 0xff87b3, alpha: 0.95 });
-
-  const iceNeonGlow = new Graphics()
-    .circle(14, 24, 36)
-    .fill({ color: 0xff6fa7, alpha: 0.05 });
-
-  iceNeonCone.addChild(iceNeonGlow, iceNeonConeShape, iceNeonScoop);
-
-  gsap.to(iceNeonGlow, {
-    alpha: 0.14,
-    duration: 1.3,
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut",
-  });
-
-  // стойка и салфетки
-  iceDetailLayer.addChild(
-    new Graphics()
-      .roundRect(55, 478, 280, 14, 5)
-      .fill(0x9c6c64)
-      .roundRect(296, 450, 24, 24, 4)
-      .fill(0xf1ebe7)
-  );
-
-  // маленькая табличка
-  const iceSmallSign = new Text({
-    text: "маленькие радости\nделают день особенным ♡",
-    style: {
-      fill: 0xe4b9c8,
-      fontFamily: "Arial",
-      fontSize: 10,
-      align: "center",
-      lineHeight: 14,
-    },
-  });
-  iceSmallSign.anchor.set(0.5);
-  iceSmallSign.position.set(312, 420);
-  iceDetailLayer.addChild(iceSmallSign);
-
-
+// корпус
 const kioskBody = new Graphics()
-  .roundRect(-145, -175, 290, 270, 18)
-  .fill(0xead9d5);
-
+  .roundRect(-148, -154, 296, 286, 18)
+  .fill(0xeadbd5)
+  .stroke({ width: 2, color: 0x6e3f48, alpha: 0.34 });
 kiosk.addChild(kioskBody);
 
-const kioskInner = new Graphics()
-  .roundRect(-124, -135, 248, 145, 12)
-  .fill(0x2b2028);
+// нижняя деревянная панель
+const kioskLower = new Graphics()
+  .roundRect(-140, 55, 280, 68, 12)
+  .fill(0x75505a);
+kiosk.addChild(kioskLower);
 
-kiosk.addChild(kioskInner);
-
-// навес
-const awning = new Container();
-awning.y = -176;
-kiosk.addChild(awning);
-
-for (let i = 0; i < 8; i++) {
-  const stripe = new Graphics()
-    .rect(-144 + i * 36, 0, 36, 40)
-    .fill(i % 2 === 0 ? 0x9d1738 : 0xf4e6e1);
-
-  awning.addChild(stripe);
+// вертикальные декоративные планки
+for (let i = 0; i < 7; i++) {
+  kiosk.addChild(
+    new Graphics()
+      .roundRect(-126 + i * 42, 62, 4, 53, 2)
+      .fill({ color: 0xa77a82, alpha: 0.42 })
+  );
 }
 
-const awningEdge = new Graphics()
-  .roundRect(-150, 32, 300, 18, 8)
-  .fill(0x7f142f);
+// крыша
+const roof = new Graphics()
+  .moveTo(-164, -154)
+  .lineTo(-128, -206)
+  .lineTo(128, -206)
+  .lineTo(164, -154)
+  .closePath()
+  .fill(0x351f2b)
+  .stroke({ width: 2, color: 0x7d4054, alpha: 0.65 });
+kiosk.addChild(roof);
 
-awning.addChild(awningEdge);
+// вывеска на крыше
+const signPlate = new Graphics()
+  .roundRect(-91, -196, 182, 42, 15)
+  .fill(0xf3e7df)
+  .stroke({ width: 1.4, color: 0xb46d82, alpha: 0.65 });
+kiosk.addChild(signPlate);
 
-// вывеска
 const kioskSign = new Text({
   text: "МОРОЖЕНОЕ",
   style: {
-    fill: 0x4c2631,
+    fill: 0x5a2b3c,
     fontFamily: "Arial",
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: "700",
     letterSpacing: 1.5,
   },
 });
-
 kioskSign.anchor.set(0.5);
-kioskSign.position.set(0, 40);
+kioskSign.position.set(0, -175);
 kiosk.addChild(kioskSign);
 
-// прилавок
-const counter = new Graphics()
-  .roundRect(-135, 0, 270, 28, 8)
-  .fill(0xc8aaa7);
+// полосатый навес
+const awning = new Container();
+awning.position.set(0, -142);
+kiosk.addChild(awning);
 
-kiosk.addChild(counter);
+for (let i = 0; i < 8; i++) {
+  const awningStripe = new Graphics()
+    .rect(-144 + i * 36, 0, 36, 38)
+    .fill(i % 2 === 0 ? 0x9d3854 : 0xf5e9e3);
+  awning.addChild(awningStripe);
+}
 
-// стаканчики/мороженое в витрине
+awning.addChild(
+  new Graphics()
+    .roundRect(-148, 32, 296, 16, 7)
+    .fill(0x7f2944)
+);
+
+// гирлянда под навесом
+const kioskLights = new Container();
+kioskLights.position.set(0, -98);
+kiosk.addChild(kioskLights);
+
+for (let i = 0; i < 10; i++) {
+  const lx = -123 + i * 27;
+  const glow = new Graphics()
+    .circle(lx, 0, 13)
+    .fill({ color: 0xffc77d, alpha: 0.06 });
+  const bulb = new Graphics()
+    .circle(lx, 0, 3.2)
+    .fill({ color: 0xffd79c, alpha: 0.96 });
+  kioskLights.addChild(glow, bulb);
+
+  gsap.to(glow, {
+    alpha: 0.14,
+    duration: 1.8 + (i % 4) * 0.25,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+}
+
+// окно выдачи
+const serviceWindow = new Graphics()
+  .roundRect(-124, -82, 248, 105, 12)
+  .fill(0x241b24)
+  .stroke({ width: 2, color: 0xb78591, alpha: 0.38 });
+kiosk.addChild(serviceWindow);
+
+// тёплый свет из окна
+const windowGlow = new Graphics()
+  .roundRect(-116, -74, 232, 89, 10)
+  .fill({ color: 0xffc986, alpha: 0.09 });
+kiosk.addChild(windowGlow);
+
+gsap.to(windowGlow, {
+  alpha: 0.16,
+  duration: 2.4,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+// стеклянная витрина
+const displayCase = new Container();
+displayCase.position.set(0, -7);
+kiosk.addChild(displayCase);
+
+displayCase.addChild(
+  new Graphics()
+    .roundRect(-116, -42, 232, 62, 10)
+    .fill({ color: 0x92afbf, alpha: 0.13 })
+    .stroke({ width: 1.4, color: 0xdbe8ed, alpha: 0.38 })
+);
+
+// ванночки мороженого — выглядят как настоящая витрина, а не ряд рожков
 const flavors = [
-  0xff7c9c,
-  0x75c9d8,
-  0xf8d45f,
-  0x9d7cdf,
-  0x6fc58b,
-  0xf08c5b,
-  0xc75f8c,
+  { color: 0xf4a8b8, name: "клубника" },
+  { color: 0x805548, name: "шоколад" },
+  { color: 0xa5c798, name: "фисташка" },
+  { color: 0xecc36d, name: "карамель" },
+  { color: 0xc09cda, name: "ягоды" },
 ];
 
 const flavorItems = [];
 
-flavors.forEach((color, i) => {
-  const item = new Container();
+flavors.forEach((flavor, i) => {
+  const tray = new Container();
+  tray.position.set(-88 + i * 44, -13);
 
-  item.x = -102 + i * 34;
-  item.y = -68;
+  const trayBody = new Graphics()
+    .roundRect(-18, -12, 36, 26, 5)
+    .fill(0xb8b4b1)
+    .stroke({ width: 1, color: 0xe8e4e1, alpha: 0.45 });
 
-  const flavorCone = new Graphics()
-    .moveTo(-8, 11)
-    .lineTo(8, 11)
-    .lineTo(0, 40)
-    .closePath()
-    .fill(0xd7a369);
+  const gelato = new Graphics()
+    .ellipse(0, -7, 15, 7)
+    .fill(flavor.color)
+    .ellipse(-7, -8, 7, 4)
+    .fill({ color: flavor.color, alpha: 0.96 })
+    .ellipse(7, -8, 7, 4)
+    .fill({ color: flavor.color, alpha: 0.96 });
 
-  const scoop = new Graphics()
-    .circle(0, 5, 14)
-    .fill(color);
-
-  const shine = new Graphics()
-    .circle(-4, 1, 3)
-    .fill({
-      color: 0xffffff,
-      alpha: 0.28,
-    });
-
-  item.addChild(flavorCone, scoop, shine);
-  kiosk.addChild(item);
-  flavorItems.push(item);
+  tray.addChild(trayBody, gelato);
+  displayCase.addChild(tray);
+  flavorItems.push(tray);
 });
 
-// БЕЛЫЙ ПЛОМБИР — специально отдельно
+// отдельная белая ванночка — пломбир
 const plombir = new Container();
-plombir.position.set(101, -64);
-kiosk.addChild(plombir);
+plombir.position.set(88, -13);
+displayCase.addChild(plombir);
 
-const plombirCone = new Graphics()
-  .moveTo(-9, 12)
-  .lineTo(9, 12)
-  .lineTo(0, 44)
-  .closePath()
-  .fill(0xd7a369);
+const plombirTray = new Graphics()
+  .roundRect(-18, -12, 36, 26, 5)
+  .fill(0xb8b4b1)
+  .stroke({ width: 1, color: 0xffffff, alpha: 0.55 });
 
 const plombirScoop = new Graphics()
-  .circle(0, 5, 15)
-  .fill(0xfffbf2);
+  .ellipse(0, -7, 15, 7)
+  .fill(0xfffbf0)
+  .ellipse(-7, -8, 7, 4)
+  .fill(0xfffdf7)
+  .ellipse(7, -8, 7, 4)
+  .fill(0xfffdf7);
 
-const plombirShine = new Graphics()
-  .circle(-5, 0, 4)
-  .fill({
-    color: 0xffffff,
-    alpha: 0.6,
-  });
+const plombirTinyGlow = new Graphics()
+  .circle(0, -5, 28)
+  .fill({ color: 0xfff2c7, alpha: 0.035 });
 
-plombir.addChild(
-  plombirCone,
-  plombirScoop,
-  plombirShine
+plombir.addChild(plombirTinyGlow, plombirTray, plombirScoop);
+
+// полка перед витриной
+kiosk.addChild(
+  new Graphics()
+    .roundRect(-133, 15, 266, 24, 8)
+    .fill(0xb9948e)
+    .stroke({ width: 1, color: 0x704954, alpha: 0.35 })
 );
 
-// маленькая лампа киоска
-const kioskLampGlow = new Graphics()
-  .circle(0, -112, 90)
-  .fill({
-    color: 0xffc06e,
-    alpha: 0.07,
-  });
+// стаканчики и салфетки
+const cups = new Container();
+cups.position.set(-94, 0);
+kiosk.addChild(cups);
+for (let i = 0; i < 3; i++) {
+  cups.addChild(
+    new Graphics()
+      .moveTo(i * 9 - 8, 0)
+      .lineTo(i * 9 + 8, 0)
+      .lineTo(i * 9 + 5, 19)
+      .lineTo(i * 9 - 5, 19)
+      .closePath()
+      .fill(i % 2 ? 0xf7e8e3 : 0xd88ca3)
+  );
+}
 
+kiosk.addChild(
+  new Graphics()
+    .roundRect(82, -4, 25, 22, 4)
+    .fill(0xf7f0eb)
+    .rect(87, -11, 15, 10)
+    .fill(0xffffff)
+);
+
+// маленькое меню слева
+const menuBoard = new Container();
+menuBoard.position.set(-178, -56);
+kiosk.addChild(menuBoard);
+
+menuBoard.addChild(
+  new Graphics()
+    .roundRect(-3, -4, 74, 132, 8)
+    .fill(0x282027)
+    .stroke({ width: 1.2, color: 0xa96f7e, alpha: 0.58 })
+);
+
+const menuText = new Text({
+  text: "СЕГОДНЯ\n\nПломбир ♡\nШоколад\nКлубника\nФисташка\nКарамель",
+  style: {
+    fill: 0xf6e7df,
+    fontFamily: "Arial",
+    fontSize: 10,
+    lineHeight: 18,
+  },
+});
+menuText.position.set(7, 7);
+menuBoard.addChild(menuText);
+
+// маленький горшок справа — добавляет жизни сцене
+const plant = new Container();
+plant.position.set(154, 82);
+kiosk.addChild(plant);
+
+plant.addChild(
+  new Graphics()
+    .roundRect(-16, 18, 32, 32, 7)
+    .fill(0x7c4e47)
+    .ellipse(-7, 11, 7, 18)
+    .fill(0x5e8463)
+    .ellipse(7, 8, 7, 20)
+    .fill(0x6d9570)
+    .ellipse(0, 0, 6, 18)
+    .fill(0x789d75)
+);
+
+// мелкая надпись на корпусе
+const smallKioskText = new Text({
+  text: "вечер + мороженое = хороший план ♡",
+  style: {
+    fill: 0xf0d9dc,
+    fontFamily: "Arial",
+    fontSize: 9,
+  },
+});
+smallKioskText.anchor.set(0.5);
+smallKioskText.position.set(0, 90);
+kiosk.addChild(smallKioskText);
+
+// очень мягкий общий свет киоска
+const kioskLampGlow = new Graphics()
+  .circle(0, -20, 150)
+  .fill({ color: 0xffbf75, alpha: 0.035 });
 kiosk.addChildAt(kioskLampGlow, 1);
 
 gsap.to(kioskLampGlow, {
-  alpha: 0.13,
-  duration: 2,
+  alpha: 0.075,
+  duration: 3,
   repeat: -1,
   yoyo: true,
   ease: "sine.inOut",
@@ -1523,10 +1545,13 @@ const iceKessi = createKessi();
 const iceObsid = createObsid();
 const iceDragon = createDragon();
 
-iceKessi.root.position.set(125, 710);
-iceObsid.root.position.set(245, 710);
-iceDragon.root.position.set(320, 735);
-iceDragon.root.scale.set(1);
+iceKessi.root.position.set(132, 714);
+iceObsid.root.position.set(232, 714);
+iceDragon.root.position.set(310, 734);
+
+iceKessi.root.scale.set(0.91);
+iceObsid.root.scale.set(0.91);
+iceDragon.root.scale.set(0.84);
 
 iceCreamScene.addChild(
   iceKessi.root,
@@ -1686,8 +1711,8 @@ function showIceCreamScene() {
     iceKessi.root,
     {
       alpha: 1,
-      x: 125,
-      duration: 1.1,
+      x: 132,
+      duration: 1.7,
       ease: "power2.out",
     },
     1
@@ -1697,8 +1722,8 @@ function showIceCreamScene() {
     iceObsid.root,
     {
       alpha: 1,
-      x: 245,
-      duration: 1.1,
+      x: 232,
+      duration: 1.7,
       ease: "power2.out",
     },
     1.15
@@ -1709,9 +1734,9 @@ function showIceCreamScene() {
     iceDragon.root,
     {
       alpha: 1,
-      x: 320,
-      duration: 0.9,
-      ease: "back.out(1.6)",
+      x: 310,
+      duration: 1.45,
+      ease: "back.out(1.35)",
     },
     1.8
   );
@@ -1727,7 +1752,7 @@ function showIceCreamScene() {
         yoyo: true,
         repeat: 1,
       },
-      2.35 + index * 0.06
+      3.6 + index * 0.14
     );
   });
 
@@ -1740,7 +1765,7 @@ function showIceCreamScene() {
       yoyo: true,
       repeat: 1,
     },
-    2.8
+    4.6
   );
 
   // а Обсид выбирает именно белый пломбир
@@ -1752,7 +1777,7 @@ function showIceCreamScene() {
       duration: 0.3,
       ease: "back.out(2)",
     },
-    3.5
+    5.6
   );
 
   tl.to(
@@ -1761,7 +1786,7 @@ function showIceCreamScene() {
       alpha: 0.18,
       duration: 0.3,
     },
-    3.9
+    6.25
   );
 
   tl.to(
@@ -1770,7 +1795,7 @@ function showIceCreamScene() {
       alpha: 1,
       duration: 0.35,
     },
-    3.9
+    6.25
   );
 
   // Обсид чуть поворачивается к Кэсси
@@ -1781,7 +1806,7 @@ function showIceCreamScene() {
       duration: 0.45,
       ease: "power2.out",
     },
-    4.15
+    6.8
   );
 
   // пломбир как будто протягивается ей
@@ -1794,7 +1819,7 @@ function showIceCreamScene() {
       duration: 0.55,
       ease: "power2.out",
     },
-    4.3
+    7.2
   );
 
   // Кэсси слегка "радуется"
@@ -1807,7 +1832,7 @@ function showIceCreamScene() {
       yoyo: true,
       ease: "sine.inOut",
     },
-    4.65
+    7.9
   );
 
   // дракоша: ассортимент -> пломбир -> Кэсси
@@ -1818,7 +1843,7 @@ function showIceCreamScene() {
       rotation: 0.12,
       duration: 0.35,
     },
-    5
+    8.7
   );
 
   tl.to(
@@ -1827,7 +1852,7 @@ function showIceCreamScene() {
       rotation: -0.12,
       duration: 0.35,
     },
-    5.4
+    9.35
   );
 
   tl.to(
@@ -1838,7 +1863,7 @@ function showIceCreamScene() {
       duration: 0.45,
       ease: "back.out(1.5)",
     },
-    5.85
+    10.1
   );
 
   tl.to(
@@ -1847,14 +1872,14 @@ function showIceCreamScene() {
       alpha: 0,
       duration: 0.45,
     },
-    7.4
+    12.4
   );
 
   // И, конечно, Дракоша тоже каким-то образом
   // уже оказался с мороженым :)
   tl.call(() => {
     iceDragon.showIcecream();
-  }, null, 7.55);
+  }, null, 12.8);
 
   tl.to(
     iceDragon.root,
@@ -1864,13 +1889,13 @@ function showIceCreamScene() {
       repeat: 1,
       yoyo: true,
     },
-    7.55
+    12.8
   );
 
   // финальная маленькая пауза сцены
   tl.call(() => {
     iceHint.text = "ИДЁМ ДАЛЬШЕ ♡";
-  }, null, 7.8);
+  }, null, 13.5);
 
   tl.fromTo(
     [iceHintBg, iceHint],
@@ -1883,20 +1908,20 @@ function showIceCreamScene() {
       y: 772,
       duration: 0.6,
     },
-    7.8
+    13.5
   );
 
   tl.call(() => {
     iceHint.eventMode = "static";
     iceHint.cursor = "pointer";
     iceNextTap.eventMode = "static";
-  }, null, 8.45);
+  }, null, 14.4);
 
   // Если Даша ничего не нажмёт, сцена всё равно продолжится сама.
   // Так подарок не может "застрять" на мороженом.
   tl.call(() => {
     continueAfterIceCream();
-  }, null, 11.2);
+  }, null, 24.0);
 }
 
 iceHint.on("pointertap", continueAfterIceCream);
