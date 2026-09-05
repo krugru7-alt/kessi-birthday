@@ -3309,8 +3309,8 @@ gsap.to(finaleHeart, {
 // =====================================================
 
 const finaleTitle = new Text({
-  text: "моя маленькая
-    "С днем рождения♡",
+ const finaleTitle = new Text({
+  text: "моя маленькая\nС днём рождения ♡",
   style: {
     fill: 0xffe7ef,
     fontFamily: "Arial",
