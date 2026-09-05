@@ -70,6 +70,17 @@ async function start() {
     spriteTextures[name] = await Assets.load(url);
   }
 
+
+  // Кадр для экрана кинотеатра.
+  // Положи свой JPG в public/bg/rapunzel-frame.jpg.
+  // Если файла нет — код не ломается, просто остаётся абстрактный экран.
+  let rapunzelTexture = null;
+  try {
+    rapunzelTexture = await Assets.load("/bg/rapunzel-frame.jpg");
+  } catch (e) {
+    console.warn("rapunzel-frame.jpg не найден — используем заглушку");
+  }
+
   // =====================================================
   // ОСНОВНАЯ СЦЕНА 390x844
   // =====================================================
@@ -993,8 +1004,11 @@ const kessi = createKessi();
 const obsid = createObsid();
 const dragon = createDragon();
 
-kessi.root.position.set(145, 730);
-obsid.root.position.set(245, 730);
+kessi.root.position.set(155, 742);
+obsid.root.position.set(225, 742);
+
+kessi.root.scale.set(0.92);
+obsid.root.scale.set(0.92);
 
 dragon.root.position.set(320, 755);
 dragon.root.scale.set(1);
@@ -1229,6 +1243,137 @@ iceCreamScene.addChild(kioskGroundGlow);
 const kiosk = new Container();
 kiosk.position.set(195, 400);
 iceCreamScene.addChild(kiosk);
+
+  // =====================================================
+  // ДЕТАЛИ КИОСКА — свет, банки, меню, неон, полки
+  // =====================================================
+
+  const kioskDetails = new Container();
+  iceCreamScene.addChild(kioskDetails);
+
+  // гирлянда лампочек
+  for (let i = 0; i < 11; i++) {
+    const bulbX = 78 + i * 24;
+    const bulb = new Graphics()
+      .circle(bulbX, 246, 4)
+      .fill({ color: 0xffd89a, alpha: 0.95 });
+
+    const bulbGlow = new Graphics()
+      .circle(bulbX, 246, 12)
+      .fill({ color: 0xffd28a, alpha: 0.08 });
+
+    kioskDetails.addChild(bulbGlow, bulb);
+
+    gsap.to(bulbGlow, {
+      alpha: 0.18,
+      duration: 1.1 + Math.random() * 1.6,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+  }
+
+  // полки с баночками/топпингами
+  const shelf = new Graphics()
+    .roundRect(100, 388, 190, 10, 4)
+    .fill(0x6d4740);
+  kioskDetails.addChild(shelf);
+
+  const jarColors = [
+    0xf3b4c2, 0xf3d28d, 0xa4c8eb, 0xd2a8e8,
+    0xa8d6a2, 0xf0a985, 0xe7c5a9, 0xb8d4cf
+  ];
+
+  jarColors.forEach((c, i) => {
+    const x = 108 + i * 22;
+    const jar = new Graphics()
+      .roundRect(x, 358, 14, 27, 4)
+      .fill({ color: c, alpha: 0.86 })
+      .rect(x + 2, 354, 10, 5)
+      .fill(0xd9d0c8);
+
+    kioskDetails.addChild(jar);
+  });
+
+  // меловая доска с меню
+  const menuBoard = new Container();
+  menuBoard.position.set(42, 295);
+  kioskDetails.addChild(menuBoard);
+
+  const menuBg = new Graphics()
+    .roundRect(0, 0, 92, 152, 10)
+    .fill(0x231f23)
+    .stroke({ width: 1.2, color: 0xc59ea6, alpha: 0.55 });
+
+  menuBoard.addChild(menuBg);
+
+  const menuText = new Text({
+    text:
+      "ВКУСЫ\n\nПломбир\nШоколад\nКлубника\nФисташка\nКарамель\nМанго",
+    style: {
+      fill: 0xf5e4dd,
+      fontFamily: "Arial",
+      fontSize: 11,
+      lineHeight: 18,
+    },
+  });
+  menuText.position.set(10, 10);
+  menuBoard.addChild(menuText);
+
+  // неоновый рожок справа
+  const neonCone = new Container();
+  neonCone.position.set(324, 322);
+  kioskDetails.addChild(neonCone);
+
+  const cone = new Graphics()
+    .moveTo(0, 28)
+    .lineTo(14, 58)
+    .lineTo(28, 28)
+    .closePath()
+    .stroke({ width: 2.3, color: 0xffc18f, alpha: 0.95 });
+
+  const neonIce = new Graphics()
+    .circle(14, 19, 13)
+    .stroke({ width: 2.4, color: 0xff87b3, alpha: 0.95 });
+
+  const neonGlow = new Graphics()
+    .circle(14, 24, 36)
+    .fill({ color: 0xff6fa7, alpha: 0.05 });
+
+  neonCone.addChild(neonGlow, cone, neonIce);
+
+  gsap.to(neonGlow, {
+    alpha: 0.14,
+    duration: 1.3,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+
+  // стойка и салфетки
+  kioskDetails.addChild(
+    new Graphics()
+      .roundRect(55, 478, 280, 14, 5)
+      .fill(0x9c6c64)
+      .roundRect(296, 450, 24, 24, 4)
+      .fill(0xf1ebe7)
+  );
+
+  // маленькая табличка
+  const kioskSign = new Text({
+    text: "маленькие радости\nделают день особенным ♡",
+    style: {
+      fill: 0xe4b9c8,
+      fontFamily: "Arial",
+      fontSize: 10,
+      align: "center",
+      lineHeight: 14,
+    },
+  });
+  kioskSign.anchor.set(0.5);
+  kioskSign.position.set(312, 420);
+  kioskDetails.addChild(kioskSign);
+
 
 const kioskBody = new Graphics()
   .roundRect(-145, -175, 290, 270, 18)
@@ -1778,6 +1923,85 @@ const sunsetSun = new Graphics()
   .circle(305, 395, 42).fill(0xffc88f);
 sunsetScene.addChild(sunsetSun);
 
+// вода и отражение заката
+const sunsetWater = new Graphics()
+  .rect(0, 515, W, 175)
+  .fill(0x463347);
+sunsetScene.addChild(sunsetWater);
+
+// отражение солнца
+for (let i = 0; i < 8; i++) {
+  sunsetScene.addChild(
+    new Graphics()
+      .ellipse(305, 525 + i * 14, 34 - i * 2.8, 4)
+      .fill({ color: 0xffcf9c, alpha: 0.12 - i * 0.008 })
+  );
+}
+
+// дальний берег
+const sunsetShore = new Graphics()
+  .rect(0, 490, W, 28)
+  .fill(0x27222f);
+sunsetScene.addChild(sunsetShore);
+
+// городские огни
+for (let i = 0; i < 24; i++) {
+  const x = 8 + i * 16;
+  const y = 478 - (i % 4) * 5;
+  sunsetScene.addChild(
+    new Graphics()
+      .circle(x, y, 1.5 + (i % 3) * 0.4)
+      .fill({ color: 0xffd49b, alpha: 0.7 })
+  );
+}
+
+// облака
+const sunsetClouds = new Container();
+sunsetScene.addChild(sunsetClouds);
+
+[
+  [80, 235, 0.9],
+  [235, 185, 0.65],
+  [310, 255, 0.55],
+].forEach(([x, y, s]) => {
+  const c = new Graphics()
+    .ellipse(0, 0, 45, 12).fill({ color: 0xffd4c5, alpha: 0.11 })
+    .ellipse(-24, 1, 24, 8).fill({ color: 0xffd4c5, alpha: 0.09 })
+    .ellipse(25, 2, 27, 8).fill({ color: 0xffd4c5, alpha: 0.08 });
+  c.position.set(x, y);
+  c.scale.set(s);
+  sunsetClouds.addChild(c);
+
+  gsap.to(c, {
+    x: x + 14,
+    duration: 14 + Math.random() * 8,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+});
+
+// ветки на переднем плане
+const sunsetBranches = new Graphics()
+  .moveTo(0, 0).quadraticCurveTo(55, 70, 92, 145)
+  .stroke({ width: 5, color: 0x17161d, alpha: 0.95 })
+  .moveTo(W, 0).quadraticCurveTo(338, 70, 300, 150)
+  .stroke({ width: 5, color: 0x17161d, alpha: 0.95 });
+sunsetScene.addChild(sunsetBranches);
+
+// лавочка
+const sunsetBench = new Container();
+sunsetBench.position.set(65, 665);
+sunsetScene.addChild(sunsetBench);
+sunsetBench.addChild(
+  new Graphics()
+    .roundRect(0, 0, 260, 12, 4).fill(0x4c322f)
+    .roundRect(5, -28, 250, 10, 4).fill(0x543734)
+    .rect(30, 12, 7, 42).fill(0x18171c)
+    .rect(220, 12, 7, 42).fill(0x18171c)
+);
+
+
 const skyline = new Graphics();
 for (let x = 0; x < W; x += 34) {
   const h = 55 + ((x * 17) % 80);
@@ -1789,10 +2013,17 @@ const sunsetObsid = createObsid();
 const sunsetKessi = createKessi();
 const sunsetDragon = createDragon();
 
-sunsetKessi.root.position.set(155, 710);
-sunsetObsid.root.position.set(235, 710);
-sunsetDragon.root.position.set(305, 725);
-sunsetDragon.root.scale.set(0.88);
+sunsetKessi.root.position.set(158, 690);
+sunsetObsid.root.position.set(228, 690);
+sunsetDragon.root.position.set(292, 697);
+
+sunsetKessi.root.scale.set(0.84);
+sunsetObsid.root.scale.set(0.84);
+sunsetDragon.root.scale.set(0.72);
+
+// визуально "садим" их на лавочку: немного опускаем и уменьшаем
+sunsetKessi.root.rotation = -0.015;
+sunsetObsid.root.rotation = 0.012;
 
 sunsetScene.addChild(
   sunsetKessi.root,
@@ -2176,13 +2407,33 @@ const screenGlow = new Graphics()
   .fill(0xe5cbd6);
 hallScene.addChild(screenGlow);
 
-const screenText = new Text({
-  text: "✨",
-  style: { fontSize: 72 },
-});
-screenText.anchor.set(0.5);
-screenText.position.set(W / 2, 230);
-hallScene.addChild(screenText);
+let screenVisual;
+
+if (rapunzelTexture) {
+  screenVisual = new Sprite(rapunzelTexture);
+  screenVisual.anchor.set(0.5);
+  screenVisual.position.set(W / 2, 230);
+
+  const maxW = 300;
+  const maxH = 220;
+  const scale = Math.min(
+    maxW / screenVisual.texture.width,
+    maxH / screenVisual.texture.height
+  );
+  screenVisual.scale.set(scale);
+
+  // лёгкое тёплое свечение, будто реально идёт фильм
+  screenVisual.alpha = 0.93;
+  hallScene.addChild(screenVisual);
+} else {
+  screenVisual = new Text({
+    text: "🏮✨",
+    style: { fontSize: 60 },
+  });
+  screenVisual.anchor.set(0.5);
+  screenVisual.position.set(W / 2, 230);
+  hallScene.addChild(screenVisual);
+}
 
 // кресла
 for (let row = 0; row < 3; row++) {
@@ -2198,12 +2449,38 @@ const hallKessi = createKessi();
 const hallObsid = createObsid();
 const hallDragon = createDragon();
 
-hallKessi.root.position.set(155, 620);
-hallObsid.root.position.set(230, 620);
-hallDragon.root.position.set(300, 625);
-hallDragon.root.scale.set(0.75);
+hallKessi.root.position.set(150, 610);
+hallObsid.root.position.set(220, 610);
+hallDragon.root.position.set(292, 615);
+
+hallKessi.root.scale.set(0.63);
+hallObsid.root.scale.set(0.63);
+hallDragon.root.scale.set(0.52);
+
+// эффект посадки: герои частично "утоплены" за спинками кресел
+hallKessi.root.y += 18;
+hallObsid.root.y += 18;
+hallDragon.root.y += 22;
 
 hallScene.addChild(hallKessi.root, hallObsid.root, hallDragon.root);
+
+// передние части кресел закрывают нижнюю часть персонажей — они реально сидят
+const seatOverlay = new Container();
+hallScene.addChild(seatOverlay);
+
+[
+  [116, 590, 58, 58],
+  [186, 590, 58, 58],
+  [256, 590, 58, 58],
+].forEach(([x, y, w, h]) => {
+  seatOverlay.addChild(
+    new Graphics()
+      .roundRect(x, y, w, h, 15)
+      .fill(0x3a1d2d)
+      .stroke({ width: 1, color: 0x5e3248, alpha: 0.5 })
+  );
+});
+
 
 const zzz = new Text({
   text: "z z z",
@@ -2456,15 +2733,33 @@ const photoKessi = createKessi();
 const photoObsid = createObsid();
 const photoDragon = createDragon();
 
-photoKessi.root.position.set(-35, 55);
-photoObsid.root.position.set(35, 55);
-photoDragon.root.position.set(82, 58);
+photoKessi.root.position.set(-42, 54);
+photoObsid.root.position.set(32, 54);
+photoDragon.root.position.set(83, 60);
 
-photoKessi.root.scale.set(0.55);
-photoObsid.root.scale.set(0.55);
-photoDragon.root.scale.set(0.42);
+photoKessi.root.scale.set(0.50);
+photoObsid.root.scale.set(0.50);
+photoDragon.root.scale.set(0.40);
+
+// сдвигаем ближе друг к другу — кадр выглядит как совместное фото втроём
+photoKessi.root.rotation = -0.03;
+photoObsid.root.rotation = 0.025;
 
 photoCard.addChild(photoKessi.root, photoObsid.root, photoDragon.root);
+
+const photoLabel = new Text({
+  text: "Мы ♡",
+  style: {
+    fill: 0x47313a,
+    fontFamily: "Arial",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+});
+photoLabel.anchor.set(0.5);
+photoLabel.position.set(0, 82);
+photoCard.addChild(photoLabel);
+
 
 const photoDate = new Text({
   text: "05.09.2026",
