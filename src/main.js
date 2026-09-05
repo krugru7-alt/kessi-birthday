@@ -85,6 +85,16 @@ async function start() {
     console.warn("rapunzel-frame.jpg не найден — используем заглушку");
   }
 
+
+  // Совместное фото Кэсси + Обсид + Дракоша.
+  // Файл: public/bg/our-photo.jpg
+  let ourPhotoTexture = null;
+  try {
+    ourPhotoTexture = await Assets.load("/bg/our-photo.jpg");
+  } catch (e) {
+    console.warn("our-photo.jpg не найден — используем резервную нарисованную сцену");
+  }
+
   // =====================================================
   // ОСНОВНАЯ СЦЕНА 390x844
   // =====================================================
@@ -1008,11 +1018,12 @@ const kessi = createKessi();
 const obsid = createObsid();
 const dragon = createDragon();
 
-kessi.root.position.set(155, 742);
-obsid.root.position.set(225, 742);
+kessi.root.position.set(155, 748);
+obsid.root.position.set(225, 748);
 
-kessi.root.scale.set(0.92);
-obsid.root.scale.set(0.92);
+// Чуть больше воздуха над головой персонажей на узких экранах.
+kessi.root.scale.set(0.86);
+obsid.root.scale.set(0.86);
 
 dragon.root.position.set(320, 755);
 dragon.root.scale.set(1);
@@ -2038,13 +2049,13 @@ const sunsetObsid = createObsid();
 const sunsetKessi = createKessi();
 const sunsetDragon = createDragon();
 
-sunsetKessi.root.position.set(158, 690);
-sunsetObsid.root.position.set(228, 690);
-sunsetDragon.root.position.set(292, 697);
+sunsetKessi.root.position.set(158, 700);
+sunsetObsid.root.position.set(228, 700);
+sunsetDragon.root.position.set(292, 704);
 
-sunsetKessi.root.scale.set(0.84);
-sunsetObsid.root.scale.set(0.84);
-sunsetDragon.root.scale.set(0.72);
+sunsetKessi.root.scale.set(0.76);
+sunsetObsid.root.scale.set(0.76);
+sunsetDragon.root.scale.set(0.68);
 
 // визуально "садим" их на лавочку: немного опускаем и уменьшаем
 sunsetKessi.root.rotation = -0.015;
@@ -2474,29 +2485,26 @@ const hallKessi = createKessi();
 const hallObsid = createObsid();
 const hallDragon = createDragon();
 
-hallKessi.root.position.set(150, 610);
-hallObsid.root.position.set(220, 610);
-hallDragon.root.position.set(292, 615);
+hallKessi.root.position.set(150, 620);
+hallObsid.root.position.set(220, 620);
 
-hallKessi.root.scale.set(0.63);
-hallObsid.root.scale.set(0.63);
-hallDragon.root.scale.set(0.52);
+// Дракоша сидит выше — голова и большая часть тела всегда видны над креслом.
+hallDragon.root.position.set(292, 608);
 
-// эффект посадки: герои частично "утоплены" за спинками кресел
-hallKessi.root.y += 18;
-hallObsid.root.y += 18;
-hallDragon.root.y += 22;
+hallKessi.root.scale.set(0.61);
+hallObsid.root.scale.set(0.61);
+hallDragon.root.scale.set(0.60);
 
 hallScene.addChild(hallKessi.root, hallObsid.root, hallDragon.root);
 
-// передние части кресел закрывают нижнюю часть персонажей — они реально сидят
+// Передняя часть кресел закрывает только ноги/низ тела.
+// У Дракоши отдельная низкая спинка, чтобы она не перекрывала его целиком.
 const seatOverlay = new Container();
 hallScene.addChild(seatOverlay);
 
 [
-  [116, 590, 58, 58],
-  [186, 590, 58, 58],
-  [256, 590, 58, 58],
+  [116, 612, 58, 42],
+  [186, 612, 58, 42],
 ].forEach(([x, y, w, h]) => {
   seatOverlay.addChild(
     new Graphics()
@@ -2505,6 +2513,13 @@ hallScene.addChild(seatOverlay);
       .stroke({ width: 1, color: 0x5e3248, alpha: 0.5 })
   );
 });
+
+const dragonSeatFront = new Graphics()
+  .roundRect(263, 632, 58, 25, 13)
+  .fill(0x3a1d2d)
+  .stroke({ width: 1, color: 0x5e3248, alpha: 0.5 });
+
+seatOverlay.addChild(dragonSeatFront);
 
 
 const zzz = new Text({
@@ -2516,7 +2531,7 @@ const zzz = new Text({
     fontStyle: "italic",
   },
 });
-zzz.position.set(302, 520);
+zzz.position.set(300, 525);
 zzz.alpha = 0;
 hallScene.addChild(zzz);
 
@@ -2543,9 +2558,10 @@ function showCinemaHall() {
     .to(hallScene, { alpha: 1, duration: 1 }, 0.3)
     .to(zzz, { alpha: 1, y: 505, duration: 0.8 }, 1.5)
     .to(hallDragon.root, {
-      rotation: 0.18,
-      y: 635,
-      duration: 0.8,
+      rotation: 0.14,
+      y: 613,
+      x: 297,
+      duration: 1.15,
       ease: "sine.inOut",
     }, 1.3)
     .to(hallCaption, { alpha: 1, duration: 0.7 }, 2.1)
@@ -2743,74 +2759,118 @@ const photoPaper = new Graphics()
   .fill(0xf7eee9);
 photoCard.addChild(photoPaper);
 
-// маленькая "фотография" из закатной сцены
-const photoSky = new Graphics()
+// Настоящее совместное фото втроём.
+// Если public/bg/our-photo.jpg загружен — показываем именно его.
+// Если нет — остаётся аккуратная резервная сценка, чтобы проект не падал.
+const photoWindow = new Container();
+photoCard.addChild(photoWindow);
+
+const photoFrameBg = new Graphics()
   .roundRect(-118, -155, 236, 220, 8)
-  .fill(0x9a506b);
-photoCard.addChild(photoSky);
+  .fill(0x1b1720);
+photoWindow.addChild(photoFrameBg);
 
-const photoGround = new Graphics()
-  .rect(-118, 5, 236, 60)
-  .fill(0x25232d);
-photoCard.addChild(photoGround);
+if (ourPhotoTexture) {
+  const realPhoto = new Sprite(ourPhotoTexture);
+  realPhoto.anchor.set(0.5);
 
-const photoKessi = createKessi();
-const photoObsid = createObsid();
-const photoDragon = createDragon();
+  const photoW = 228;
+  const photoH = 212;
 
-photoKessi.root.position.set(-42, 54);
-photoObsid.root.position.set(32, 54);
-photoDragon.root.position.set(83, 60);
+  const coverScale = Math.max(
+    photoW / realPhoto.texture.width,
+    photoH / realPhoto.texture.height
+  );
 
-photoKessi.root.scale.set(0.50);
-photoObsid.root.scale.set(0.50);
-photoDragon.root.scale.set(0.40);
+  realPhoto.scale.set(coverScale);
+  realPhoto.position.set(0, -45);
 
-// сдвигаем ближе друг к другу — кадр выглядит как совместное фото втроём
-photoKessi.root.rotation = -0.03;
-photoObsid.root.rotation = 0.025;
+  // Маска делает аккуратное заполнение фоторамки без растягивания изображения.
+  const photoMask = new Graphics()
+    .roundRect(-114, -151, photoW, photoH, 7)
+    .fill(0xffffff);
 
-photoCard.addChild(photoKessi.root, photoObsid.root, photoDragon.root);
+  photoWindow.addChild(realPhoto, photoMask);
+  realPhoto.mask = photoMask;
+} else {
+  // Резервный вариант
+  const backupSky = new Graphics()
+    .roundRect(-114, -151, 228, 212, 7)
+    .fill(0x9a506b);
 
+  const backupGround = new Graphics()
+    .rect(-114, 4, 228, 57)
+    .fill(0x25232d);
+
+  photoWindow.addChild(backupSky, backupGround);
+
+  const backupKessi = createKessi();
+  const backupObsid = createObsid();
+  const backupDragon = createDragon();
+
+  backupKessi.root.position.set(-42, 50);
+  backupObsid.root.position.set(30, 50);
+  backupDragon.root.position.set(82, 55);
+
+  backupKessi.root.scale.set(0.47);
+  backupObsid.root.scale.set(0.47);
+  backupDragon.root.scale.set(0.38);
+
+  photoWindow.addChild(
+    backupKessi.root,
+    backupObsid.root,
+    backupDragon.root
+  );
+}
+
+// Белая зона полароида специально оставлена под подпись.
 const photoLabel = new Text({
   text: "Мы ♡",
   style: {
-    fill: 0x47313a,
+    fill: 0x2e2027,
     fontFamily: "Arial",
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 25,
+    fontWeight: "800",
   },
 });
-photoLabel.anchor.set(0.5);
-photoLabel.position.set(0, 82);
+photoLabel.anchor.set(0, 0.5);
+photoLabel.position.set(-102, 91);
 photoCard.addChild(photoLabel);
-
 
 const photoDate = new Text({
   text: "05.09.2026",
   style: {
-    fill: 0x392831,
+    fill: 0x49333d,
     fontFamily: "Arial",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 15,
+    fontWeight: "700",
   },
 });
-photoDate.anchor.set(0.5);
-photoDate.position.set(0, 100);
+photoDate.anchor.set(1, 0.5);
+photoDate.position.set(103, 91);
 photoCard.addChild(photoDate);
 
+// Тонкая декоративная линия — отделяет фото от текста и делает подпись заметнее.
+const photoDivider = new Graphics()
+  .roundRect(-103, 108, 206, 2, 1)
+  .fill({ color: 0x7a5364, alpha: 0.24 });
+photoCard.addChild(photoDivider);
+
 const photoPhrase = new Text({
-  text: "Первую пока пришлось нарисовать.\nОстальные предлагаю делать уже самим.",
+  text: "Первую пока пришлось нарисовать.\\nОстальные предлагаю делать уже самим.",
   style: {
     fill: 0x5c3a49,
     fontFamily: "Arial",
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: "600",
     align: "center",
-    lineHeight: 20,
+    lineHeight: 18,
+    wordWrap: true,
+    wordWrapWidth: 220,
   },
 });
 photoPhrase.anchor.set(0.5);
-photoPhrase.position.set(0, 140);
+photoPhrase.position.set(0, 137);
 photoCard.addChild(photoPhrase);
 
 let finalOpened = false;
