@@ -1522,7 +1522,786 @@ function showIceCreamScene() {
     },
     7.8
   );
+
+  tl.call(() => {
+    iceHint.eventMode = "static";
+    iceHint.cursor = "pointer";
+  }, null, 8.45);
 }
+
+iceHint.on("pointertap", () => {
+  showSunsetScene();
+});
+
+
+// =====================================================
+// СЦЕНА 4 — ЗАКАТНАЯ ТОЧКА + ФОТО
+// =====================================================
+
+const sunsetScene = new Container();
+sunsetScene.visible = false;
+sunsetScene.alpha = 0;
+world.addChild(sunsetScene);
+
+const sunsetSky = new Graphics()
+  .rect(0, 0, W, 300).fill(0x33224b)
+  .rect(0, 300, W, 210).fill(0xa94f6d)
+  .rect(0, 510, W, 150).fill(0xf09a72)
+  .rect(0, 660, W, 184).fill(0x171923);
+sunsetScene.addChild(sunsetSky);
+
+const sunsetSun = new Graphics()
+  .circle(305, 395, 42).fill(0xffc88f);
+sunsetScene.addChild(sunsetSun);
+
+const skyline = new Graphics();
+for (let x = 0; x < W; x += 34) {
+  const h = 55 + ((x * 17) % 80);
+  skyline.rect(x, 600 - h, 31, h).fill(0x252331);
+}
+sunsetScene.addChild(skyline);
+
+const sunsetObsid = createObsid();
+const sunsetKessi = createKessi();
+const sunsetDragon = createDragon();
+
+sunsetKessi.root.position.set(155, 710);
+sunsetObsid.root.position.set(235, 710);
+sunsetDragon.root.position.set(305, 725);
+sunsetDragon.root.scale.set(0.88);
+
+sunsetScene.addChild(
+  sunsetKessi.root,
+  sunsetObsid.root,
+  sunsetDragon.root
+);
+
+const sunsetTitle = new Text({
+  text: "стой… тут красиво",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 22,
+    fontWeight: "500",
+  },
+});
+sunsetTitle.anchor.set(0.5);
+sunsetTitle.position.set(W / 2, 105);
+sunsetScene.addChild(sunsetTitle);
+
+const cameraButton = new Container();
+cameraButton.position.set(W / 2, 785);
+cameraButton.eventMode = "static";
+cameraButton.cursor = "pointer";
+
+const cameraBg = new Graphics()
+  .roundRect(-92, -25, 184, 50, 25)
+  .fill({ color: 0x17131d, alpha: 0.82 })
+  .stroke({ width: 1, color: 0xf3c3d4, alpha: 0.55 });
+
+const cameraText = new Text({
+  text: "📷  сделать фото",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 16,
+  },
+});
+cameraText.anchor.set(0.5);
+cameraButton.addChild(cameraBg, cameraText);
+sunsetScene.addChild(cameraButton);
+
+const flash = new Graphics()
+  .rect(0, 0, W, H)
+  .fill(0xffffff);
+flash.alpha = 0;
+sunsetScene.addChild(flash);
+
+let photoTaken = false;
+
+function showSunsetScene() {
+  iceHint.eventMode = "none";
+  sunsetScene.visible = true;
+
+  gsap.timeline()
+    .to(iceCreamScene, {
+      alpha: 0,
+      duration: 0.8,
+      ease: "power2.inOut",
+    })
+    .to(sunsetScene, {
+      alpha: 1,
+      duration: 1.1,
+      ease: "power2.inOut",
+    }, 0.35)
+    .from([sunsetKessi.root, sunsetObsid.root, sunsetDragon.root], {
+      y: "+=35",
+      alpha: 0,
+      duration: 1,
+      stagger: 0.12,
+      ease: "power2.out",
+    }, 0.8);
+}
+
+cameraButton.on("pointertap", () => {
+  if (photoTaken) return;
+  photoTaken = true;
+  cameraButton.eventMode = "none";
+
+  const tl = gsap.timeline();
+
+  tl.to(flash, { alpha: 0.95, duration: 0.08 });
+  tl.to(flash, { alpha: 0, duration: 0.35 });
+
+  tl.call(() => {
+    cameraText.text = "сохранил ♡";
+  }, null, 0.3);
+
+  tl.to(cameraButton.scale, {
+    x: 1.06,
+    y: 1.06,
+    duration: 0.18,
+    repeat: 1,
+    yoyo: true,
+  }, 0.32);
+
+  tl.call(() => {
+    showCinemaScene();
+  }, null, 1.5);
+});
+
+// =====================================================
+// СЦЕНА 5 — КИНОТЕАТР
+// =====================================================
+
+const cinemaScene = new Container();
+cinemaScene.visible = false;
+cinemaScene.alpha = 0;
+world.addChild(cinemaScene);
+
+const cinemaBg = new Graphics()
+  .rect(0, 0, W, H).fill(0x090811)
+  .rect(25, 95, 340, 540).fill(0x17131d);
+cinemaScene.addChild(cinemaBg);
+
+const marquee = new Graphics()
+  .roundRect(42, 120, 306, 105, 18)
+  .fill(0x311b31)
+  .stroke({ width: 2, color: 0xf0a6c1, alpha: 0.7 });
+cinemaScene.addChild(marquee);
+
+const cinemaTitle = new Text({
+  text: "КИНОТЕАТР",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 18,
+    fontWeight: "700",
+    letterSpacing: 3,
+  },
+});
+cinemaTitle.anchor.set(0.5);
+cinemaTitle.position.set(W / 2, 150);
+cinemaScene.addChild(cinemaTitle);
+
+const movieTitle = new Text({
+  text: "Сегодня: «Рапунцель» ✦",
+  style: {
+    fill: 0xf7bfd4,
+    fontFamily: "Arial",
+    fontSize: 21,
+    fontWeight: "600",
+  },
+});
+movieTitle.anchor.set(0.5);
+movieTitle.position.set(W / 2, 190);
+cinemaScene.addChild(movieTitle);
+
+// билеты
+for (let i = 0; i < 2; i++) {
+  const ticket = new Graphics()
+    .roundRect(95 + i * 95, 265, 78, 38, 8)
+    .fill(0xf1d9d1);
+  cinemaScene.addChild(ticket);
+}
+const ticketText = new Text({
+  text: "2 билета",
+  style: { fill: 0x33242b, fontSize: 14, fontFamily: "Arial" },
+});
+ticketText.anchor.set(0.5);
+ticketText.position.set(W / 2, 284);
+cinemaScene.addChild(ticketText);
+
+// дракоша внезапно приносит третий
+const cinemaDragon = createDragon();
+cinemaDragon.root.position.set(310, 430);
+cinemaDragon.root.scale.set(0.9);
+cinemaScene.addChild(cinemaDragon.root);
+
+const thirdTicket = new Graphics()
+  .roundRect(-24, -118, 48, 26, 6)
+  .fill(0xf1d9d1);
+cinemaDragon.root.addChild(thirdTicket);
+
+const dragonCinemaBubble = new Container();
+dragonCinemaBubble.position.set(270, 350);
+dragonCinemaBubble.alpha = 0;
+const dcbg = new Graphics()
+  .roundRect(-62, -24, 124, 48, 18)
+  .fill(0xffffff);
+const dct = new Text({
+  text: "а я что,\nне иду?",
+  style: {
+    fill: 0x2b2530,
+    fontSize: 14,
+    fontFamily: "Arial",
+    align: "center",
+  },
+});
+dct.anchor.set(0.5);
+dragonCinemaBubble.addChild(dcbg, dct);
+cinemaScene.addChild(dragonCinemaBubble);
+
+// пасхалки со снеками
+const snacks = new Container();
+snacks.position.set(40, 505);
+cinemaScene.addChild(snacks);
+
+const snackPanel = new Graphics()
+  .roundRect(0, 0, 310, 105, 16)
+  .fill({ color: 0x211a26, alpha: 0.96 });
+snacks.addChild(snackPanel);
+
+const snackTitle = new Text({
+  text: "перед залом:",
+  style: { fill: 0xcfa9b9, fontSize: 13, fontFamily: "Arial" },
+});
+snackTitle.position.set(15, 12);
+snacks.addChild(snackTitle);
+
+const snackText = new Text({
+  text: "🥒 солёные огурчики   🍏 яблочный сок\n🍬 кислые мармеладки",
+  style: {
+    fill: 0xffffff,
+    fontSize: 15,
+    fontFamily: "Arial",
+    lineHeight: 29,
+  },
+});
+snackText.position.set(15, 38);
+snacks.addChild(snackText);
+
+const cinemaHint = new Text({
+  text: "тык, заходим",
+  style: { fill: 0xf5d1df, fontSize: 17, fontFamily: "Arial" },
+});
+cinemaHint.anchor.set(0.5);
+cinemaHint.position.set(W / 2, 760);
+cinemaHint.eventMode = "static";
+cinemaHint.cursor = "pointer";
+cinemaScene.addChild(cinemaHint);
+
+function showCinemaScene() {
+  cinemaScene.visible = true;
+  cinemaScene.alpha = 0;
+
+  gsap.timeline()
+    .to(sunsetScene, { alpha: 0, duration: 0.8 })
+    .to(cinemaScene, { alpha: 1, duration: 1, ease: "power2.inOut" }, 0.35)
+    .from(marquee.scale, {
+      x: 0.92,
+      y: 0.92,
+      duration: 0.7,
+      ease: "back.out(1.5)",
+    }, 0.8)
+    .to(dragonCinemaBubble, {
+      alpha: 1,
+      y: 340,
+      duration: 0.5,
+      ease: "back.out(1.5)",
+    }, 1.7);
+}
+
+cinemaHint.on("pointertap", () => {
+  cinemaHint.eventMode = "none";
+  showCinemaHall();
+});
+
+// =====================================================
+// СЦЕНА 6 — В ЗАЛЕ
+// =====================================================
+
+const hallScene = new Container();
+hallScene.visible = false;
+hallScene.alpha = 0;
+world.addChild(hallScene);
+
+const hallBg = new Graphics()
+  .rect(0, 0, W, H).fill(0x06060b);
+hallScene.addChild(hallBg);
+
+const screenGlow = new Graphics()
+  .roundRect(35, 105, 320, 250, 14)
+  .fill(0xe5cbd6);
+hallScene.addChild(screenGlow);
+
+const screenText = new Text({
+  text: "✨",
+  style: { fontSize: 72 },
+});
+screenText.anchor.set(0.5);
+screenText.position.set(W / 2, 230);
+hallScene.addChild(screenText);
+
+// кресла
+for (let row = 0; row < 3; row++) {
+  for (let col = 0; col < 5; col++) {
+    const seat = new Graphics()
+      .roundRect(25 + col * 72, 500 + row * 70, 55, 48, 12)
+      .fill(row === 1 && (col === 1 || col === 2 || col === 3) ? 0x5a2941 : 0x281824);
+    hallScene.addChild(seat);
+  }
+}
+
+const hallKessi = createKessi();
+const hallObsid = createObsid();
+const hallDragon = createDragon();
+
+hallKessi.root.position.set(155, 620);
+hallObsid.root.position.set(230, 620);
+hallDragon.root.position.set(300, 625);
+hallDragon.root.scale.set(0.75);
+
+hallScene.addChild(hallKessi.root, hallObsid.root, hallDragon.root);
+
+const zzz = new Text({
+  text: "z z z",
+  style: {
+    fill: 0x9ec9ff,
+    fontSize: 17,
+    fontFamily: "Arial",
+    fontStyle: "italic",
+  },
+});
+zzz.position.set(302, 520);
+zzz.alpha = 0;
+hallScene.addChild(zzz);
+
+const hallCaption = new Text({
+  text: "Дракоша держался достойно.\nПочти.",
+  style: {
+    fill: 0xe9d6df,
+    fontSize: 16,
+    fontFamily: "Arial",
+    align: "center",
+    lineHeight: 24,
+  },
+});
+hallCaption.anchor.set(0.5);
+hallCaption.position.set(W / 2, 745);
+hallCaption.alpha = 0;
+hallScene.addChild(hallCaption);
+
+function showCinemaHall() {
+  hallScene.visible = true;
+
+  gsap.timeline()
+    .to(cinemaScene, { alpha: 0, duration: 0.7 })
+    .to(hallScene, { alpha: 1, duration: 1 }, 0.3)
+    .to(zzz, { alpha: 1, y: 505, duration: 0.8 }, 1.5)
+    .to(hallDragon.root, {
+      rotation: 0.18,
+      y: 635,
+      duration: 0.8,
+      ease: "sine.inOut",
+    }, 1.3)
+    .to(hallCaption, { alpha: 1, duration: 0.7 }, 2.1)
+    .call(() => showNightScene(), null, 4.2);
+}
+
+// =====================================================
+// СЦЕНА 7 — НОЧНОЙ ГОРОД
+// =====================================================
+
+const nightScene = new Container();
+nightScene.visible = false;
+nightScene.alpha = 0;
+world.addChild(nightScene);
+
+const nightBg = new Graphics()
+  .rect(0, 0, W, H).fill(0x090b18);
+nightScene.addChild(nightBg);
+
+// луна
+nightScene.addChild(
+  new Graphics().circle(305, 120, 38).fill(0xe8e5dd)
+);
+
+// здания и окна
+for (let x = 0; x < W; x += 48) {
+  const h = 110 + ((x * 13) % 170);
+  nightScene.addChild(
+    new Graphics()
+      .rect(x, 540 - h, 44, h)
+      .fill(x % 96 === 0 ? 0x15182a : 0x111526)
+  );
+
+  for (let wy = 430; wy < 525; wy += 26) {
+    nightScene.addChild(
+      new Graphics()
+        .rect(x + 10, wy, 5, 8)
+        .fill({ color: 0xffcf84, alpha: 0.55 })
+    );
+  }
+}
+
+nightScene.addChild(
+  new Graphics().rect(0, 540, W, 304).fill(0x11151c)
+);
+
+const nightKessi = createKessi();
+const nightObsid = createObsid();
+const nightDragon = createDragon();
+
+nightKessi.root.position.set(160, 690);
+nightObsid.root.position.set(235, 690);
+nightDragon.root.position.set(330, 715);
+nightDragon.root.scale.set(0.72);
+
+nightScene.addChild(nightKessi.root, nightObsid.root, nightDragon.root);
+
+const nightText1 = new Text({
+  text: "Вот бы сейчас действительно так.",
+  style: {
+    fill: 0xffffff,
+    fontSize: 21,
+    fontFamily: "Arial",
+    align: "center",
+    wordWrap: true,
+    wordWrapWidth: 330,
+  },
+});
+nightText1.anchor.set(0.5);
+nightText1.position.set(W / 2, 155);
+nightText1.alpha = 0;
+nightScene.addChild(nightText1);
+
+const nightText2 = new Text({
+  text: "Но пока — это жизнь.",
+  style: {
+    fill: 0xe7c4d1,
+    fontSize: 20,
+    fontFamily: "Arial",
+  },
+});
+nightText2.anchor.set(0.5);
+nightText2.position.set(W / 2, 220);
+nightText2.alpha = 0;
+nightScene.addChild(nightText2);
+
+const nightText3 = new Text({
+  text: "А ничего невозможного\nвсё равно нет.",
+  style: {
+    fill: 0xffffff,
+    fontSize: 23,
+    fontFamily: "Arial",
+    align: "center",
+    lineHeight: 32,
+  },
+});
+nightText3.anchor.set(0.5);
+nightText3.position.set(W / 2, 300);
+nightText3.alpha = 0;
+nightScene.addChild(nightText3);
+
+function showNightScene() {
+  nightScene.visible = true;
+
+  gsap.timeline()
+    .to(hallScene, { alpha: 0, duration: 0.9 })
+    .to(nightScene, { alpha: 1, duration: 1.2 }, 0.35)
+    .to(nightText1, { alpha: 1, y: 148, duration: 0.8 }, 1.2)
+    .to(nightText2, { alpha: 1, duration: 0.8 }, 2.7)
+    .to(nightText3, { alpha: 1, duration: 0.9 }, 4.2)
+    // Дракоша убегает вперёд и оставляет сцену тихой
+    .to(nightDragon.root, {
+      x: 440,
+      duration: 1.2,
+      ease: "power2.in",
+    }, 5.5)
+    .call(() => showFinalGift(), null, 7.2);
+}
+
+// =====================================================
+// СЦЕНА 8 — ФИНАЛЬНЫЙ ПОДАРОК
+// =====================================================
+
+const finalScene = new Container();
+finalScene.visible = false;
+finalScene.alpha = 0;
+world.addChild(finalScene);
+
+const finalBg = new Graphics()
+  .rect(0, 0, W, H).fill(0x09070d);
+finalScene.addChild(finalBg);
+
+const finalGlow = new Graphics()
+  .circle(W / 2, 410, 210)
+  .fill({ color: 0xb31c55, alpha: 0.12 });
+finalScene.addChild(finalGlow);
+
+const finalTitle = new Text({
+  text: "И ещё кое-что.",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 24,
+  },
+});
+finalTitle.anchor.set(0.5);
+finalTitle.position.set(W / 2, 150);
+finalScene.addChild(finalTitle);
+
+const miniGift = new Container();
+miniGift.position.set(W / 2, 430);
+miniGift.eventMode = "static";
+miniGift.cursor = "pointer";
+finalScene.addChild(miniGift);
+
+const miniBox = new Graphics()
+  .roundRect(-75, -20, 150, 105, 15)
+  .fill(0xf2e3e3);
+const miniRibbon = new Graphics()
+  .rect(-13, -20, 26, 105)
+  .fill(0xa5163e);
+const miniLid = new Graphics()
+  .roundRect(-84, -45, 168, 38, 12)
+  .fill(0xffeeee);
+miniGift.addChild(miniBox, miniRibbon, miniLid);
+
+const miniTag = new Text({
+  text: "тык ♡",
+  style: {
+    fill: 0xffffff,
+    fontSize: 17,
+    fontFamily: "Arial",
+  },
+});
+miniTag.anchor.set(0.5);
+miniTag.position.set(W / 2, 570);
+finalScene.addChild(miniTag);
+
+const photoCard = new Container();
+photoCard.position.set(W / 2, 390);
+photoCard.alpha = 0;
+photoCard.scale.set(0.6);
+finalScene.addChild(photoCard);
+
+const photoPaper = new Graphics()
+  .roundRect(-135, -175, 270, 350, 16)
+  .fill(0xf7eee9);
+photoCard.addChild(photoPaper);
+
+// маленькая "фотография" из закатной сцены
+const photoSky = new Graphics()
+  .roundRect(-118, -155, 236, 220, 8)
+  .fill(0x9a506b);
+photoCard.addChild(photoSky);
+
+const photoGround = new Graphics()
+  .rect(-118, 5, 236, 60)
+  .fill(0x25232d);
+photoCard.addChild(photoGround);
+
+const photoKessi = createKessi();
+const photoObsid = createObsid();
+const photoDragon = createDragon();
+
+photoKessi.root.position.set(-35, 55);
+photoObsid.root.position.set(35, 55);
+photoDragon.root.position.set(82, 58);
+
+photoKessi.root.scale.set(0.55);
+photoObsid.root.scale.set(0.55);
+photoDragon.root.scale.set(0.42);
+
+photoCard.addChild(photoKessi.root, photoObsid.root, photoDragon.root);
+
+const photoDate = new Text({
+  text: "05.09.2026",
+  style: {
+    fill: 0x392831,
+    fontFamily: "Arial",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
+photoDate.anchor.set(0.5);
+photoDate.position.set(0, 100);
+photoCard.addChild(photoDate);
+
+const photoPhrase = new Text({
+  text: "Первую пока пришлось нарисовать.\nОстальные предлагаю делать уже самим.",
+  style: {
+    fill: 0x5c3a49,
+    fontFamily: "Arial",
+    fontSize: 13,
+    align: "center",
+    lineHeight: 20,
+  },
+});
+photoPhrase.anchor.set(0.5);
+photoPhrase.position.set(0, 140);
+photoCard.addChild(photoPhrase);
+
+let finalOpened = false;
+
+function showFinalGift() {
+  finalScene.visible = true;
+
+  gsap.timeline()
+    .to(nightScene, { alpha: 0, duration: 1 })
+    .to(finalScene, { alpha: 1, duration: 1.1 }, 0.35)
+    .from(miniGift, {
+      y: 470,
+      alpha: 0,
+      duration: 0.8,
+      ease: "back.out(1.5)",
+    }, 1);
+}
+
+miniGift.on("pointertap", () => {
+  if (finalOpened) return;
+  finalOpened = true;
+  miniGift.eventMode = "none";
+
+  gsap.timeline()
+    .to(miniLid, {
+      y: -80,
+      rotation: -0.12,
+      duration: 0.7,
+      ease: "power3.out",
+    })
+    .to(miniGift, {
+      alpha: 0,
+      scaleX: 1.8,
+      scaleY: 1.8,
+      duration: 0.7,
+    }, 0.55)
+    .to(miniTag, { alpha: 0, duration: 0.3 }, 0.5)
+    .to(photoCard, {
+      alpha: 1,
+      scaleX: 1,
+      scaleY: 1,
+      duration: 1,
+      ease: "back.out(1.3)",
+    }, 0.75)
+    .call(() => showBirthdayFinale(), null, 4.2);
+});
+
+// =====================================================
+// СЦЕНА 9 — 23 / ДЕНЬ РОЖДЕНИЯ
+// =====================================================
+
+const birthdayScene = new Container();
+birthdayScene.visible = false;
+birthdayScene.alpha = 0;
+world.addChild(birthdayScene);
+
+const birthdayBg = new Graphics()
+  .rect(0, 0, W, H).fill(0x08070c);
+birthdayScene.addChild(birthdayBg);
+
+const birthdayGlow = new Graphics()
+  .circle(W / 2, 370, 240)
+  .fill({ color: 0xc51d58, alpha: 0.15 });
+birthdayScene.addChild(birthdayGlow);
+
+const big23 = new Text({
+  text: "23",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 150,
+    fontWeight: "700",
+  },
+});
+big23.anchor.set(0.5);
+big23.position.set(W / 2, 340);
+birthdayScene.addChild(big23);
+
+const birthdayText = new Text({
+  text: "С днём рождения, Даш. ♡",
+  style: {
+    fill: 0xf6cedd,
+    fontFamily: "Arial",
+    fontSize: 25,
+    fontWeight: "600",
+  },
+});
+birthdayText.anchor.set(0.5);
+birthdayText.position.set(W / 2, 505);
+birthdayScene.addChild(birthdayText);
+
+const finalPhrase = new Text({
+  text: "Если захотеть — можно и в космос полететь.\nНет ничего невозможного.\nРасстояние тогда тем более переживём.",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 17,
+    align: "center",
+    lineHeight: 27,
+    wordWrap: true,
+    wordWrapWidth: 335,
+  },
+});
+finalPhrase.anchor.set(0.5);
+finalPhrase.position.set(W / 2, 625);
+birthdayScene.addChild(finalPhrase);
+
+const finalDragon = createDragon();
+finalDragon.root.position.set(325, 435);
+finalDragon.root.scale.set(0.8);
+birthdayScene.addChild(finalDragon.root);
+
+function showBirthdayFinale() {
+  birthdayScene.visible = true;
+
+  gsap.timeline()
+    .to(finalScene, { alpha: 0, duration: 0.9 })
+    .to(birthdayScene, { alpha: 1, duration: 1.2 }, 0.35)
+    .from(big23.scale, {
+      x: 0.4,
+      y: 0.4,
+      duration: 0.9,
+      ease: "back.out(1.6)",
+    }, 0.8)
+    .from(finalDragon.root, {
+      x: 430,
+      rotation: 0.4,
+      duration: 0.9,
+      ease: "back.out(1.8)",
+    }, 1.5)
+    // финальный гэг: дракоша "толкает" цифры
+    .to(big23, {
+      rotation: -0.035,
+      x: W / 2 - 5,
+      duration: 0.18,
+      repeat: 1,
+      yoyo: true,
+    }, 2.15)
+    .from(birthdayText, {
+      alpha: 0,
+      y: 525,
+      duration: 0.8,
+    }, 2.5)
+    .from(finalPhrase, {
+      alpha: 0,
+      y: 645,
+      duration: 1,
+    }, 3.2);
+}
+
 
 // =====================================================
 // НАЖАЛИ — ПОШЛИ
