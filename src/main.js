@@ -3309,7 +3309,6 @@ gsap.to(finaleHeart, {
 // =====================================================
 
 const finaleTitle = new Text({
- const finaleTitle = new Text({
   text: "моя маленькая\nС днём рождения ♡",
   style: {
     fill: 0xffe7ef,
@@ -3327,7 +3326,7 @@ birthdayScene.addChild(finaleTitle);
 const finaleText1 = new Text({
   text:
     "Пусть этот интерактив подарит тебе улыбку,\n" +
-    "а глазки порадуются эстетике.\n",
+    "а глазки порадуются этой маленькой эстетике.\n",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
