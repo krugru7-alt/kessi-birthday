@@ -1,100 +1,71 @@
-import { Application, Container, Graphics, Text } from "pixi.js";
-import gsap from "gsap";
+import { Application, Graphics, Text } from "pixi.js";
 
 const app = new Application();
 
-await app.init({
-  resizeTo: window,
-  background: "#08070c",
-  antialias: true,
-  resolution: Math.min(window.devicePixelRatio || 1, 2),
-  autoDensity: true,
-});
-
-document.body.style.margin = "0";
-document.body.style.overflow = "hidden";
-document.body.style.background = "#08070c";
-
-app.canvas.style.position = "fixed";
-app.canvas.style.inset = "0";
-app.canvas.style.width = "100vw";
-app.canvas.style.height = "100vh";
-app.canvas.style.touchAction = "none";
-
-document.body.appendChild(app.canvas);
-
-const world = new Container();
-app.stage.addChild(world);
-
-const bg = new Graphics()
-  .rect(0, 0, app.screen.width, app.screen.height)
-  .fill("#08070c");
-
-world.addChild(bg);
-
-const glow = new Graphics()
-  .circle(0, 0, Math.min(app.screen.width, app.screen.height) * 0.28)
-  .fill({
-    color: "#ff8fb8",
-    alpha: 0.18,
+async function start() {
+  await app.init({
+    resizeTo: window,
+    backgroundColor: 0x08070c,
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio || 1, 2),
+    autoDensity: true,
   });
 
-glow.x = app.screen.width / 2;
-glow.y = app.screen.height / 2;
+  document.body.style.margin = "0";
+  document.body.style.overflow = "hidden";
+  document.body.style.background = "#08070c";
 
-world.addChild(glow);
+  app.canvas.style.position = "fixed";
+  app.canvas.style.inset = "0";
+  app.canvas.style.width = "100%";
+  app.canvas.style.height = "100%";
 
-const title = new Text({
-  text: "Кэсси",
-  style: {
-    fill: "#ffffff",
-    fontSize: Math.max(28, Math.min(app.screen.width * 0.09, 54)),
-    fontFamily: "Arial",
-    fontWeight: "600",
-    letterSpacing: 3,
-  },
-});
+  document.body.appendChild(app.canvas);
 
-title.anchor.set(0.5);
-title.x = app.screen.width / 2;
-title.y = app.screen.height / 2;
+  const glow = new Graphics();
 
-world.addChild(title);
+  glow
+    .circle(0, 0, 120)
+    .fill({
+      color: 0xff8fb8,
+      alpha: 0.2,
+    });
 
-gsap.from(title, {
-  alpha: 0,
-  y: title.y + 20,
-  duration: 1.4,
-  ease: "power2.out",
-});
+  glow.position.set(
+    app.screen.width / 2,
+    app.screen.height / 2
+  );
 
-gsap.to(glow.scale, {
-  x: 1.15,
-  y: 1.15,
-  duration: 2.4,
-  repeat: -1,
-  yoyo: true,
-  ease: "sine.inOut",
-});
+  app.stage.addChild(glow);
 
-gsap.to(glow, {
-  alpha: 0.28,
-  duration: 2.4,
-  repeat: -1,
-  yoyo: true,
-  ease: "sine.inOut",
-});
+  const title = new Text({
+    text: "Кэсси",
+    style: {
+      fill: 0xffffff,
+      fontSize: 42,
+      fontFamily: "Arial",
+      fontWeight: "bold",
+    },
+  });
 
-function resizeScene() {
-  bg.clear()
-    .rect(0, 0, app.screen.width, app.screen.height)
-    .fill("#08070c");
+  title.anchor.set(0.5);
 
-  glow.x = app.screen.width / 2;
-  glow.y = app.screen.height / 2;
+  title.position.set(
+    app.screen.width / 2,
+    app.screen.height / 2
+  );
 
-  title.x = app.screen.width / 2;
-  title.y = app.screen.height / 2;
+  app.stage.addChild(title);
 }
 
-window.addEventListener("resize", resizeScene);
+start().catch((error) => {
+  document.body.style.background = "#111";
+  document.body.innerHTML = `
+    <pre style="
+      color:white;
+      padding:20px;
+      white-space:pre-wrap;
+      font-size:14px;
+    ">${error.stack || error}</pre>
+  `;
+});
