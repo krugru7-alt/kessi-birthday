@@ -1085,6 +1085,539 @@ gsap.to(dragon.wingR, {
 });
 
 // =====================================================
+// СЦЕНА 3 — КИОСК С МОРОЖЕНЫМ
+// =====================================================
+
+const iceCreamScene = new Container();
+iceCreamScene.alpha = 0;
+iceCreamScene.visible = false;
+world.addChild(iceCreamScene);
+
+// вечерний фон
+const iceBg = new Graphics()
+  .rect(0, 0, W, H)
+  .fill(0x17111f);
+
+iceCreamScene.addChild(iceBg);
+
+const iceSkyGlow = new Graphics()
+  .circle(195, 170, 240)
+  .fill({
+    color: 0xb04b73,
+    alpha: 0.13,
+  });
+
+iceCreamScene.addChild(iceSkyGlow);
+
+// дальние огни
+for (let i = 0; i < 26; i++) {
+  const light = new Graphics()
+    .circle(0, 0, Math.random() * 2.3 + 0.8)
+    .fill({
+      color: i % 3 === 0 ? 0xffc985 : 0xf4a6c2,
+      alpha: 0.35 + Math.random() * 0.45,
+    });
+
+  light.position.set(
+    Math.random() * W,
+    80 + Math.random() * 390
+  );
+
+  iceCreamScene.addChild(light);
+
+  gsap.to(light, {
+    alpha: 0.12,
+    duration: 1 + Math.random() * 2,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+}
+
+// земля
+const iceGround = new Graphics()
+  .rect(0, 585, W, 259)
+  .fill(0x101319);
+
+iceCreamScene.addChild(iceGround);
+
+// свет под киоском
+const kioskGroundGlow = new Graphics()
+  .ellipse(195, 610, 160, 44)
+  .fill({
+    color: 0xffc47b,
+    alpha: 0.08,
+  });
+
+iceCreamScene.addChild(kioskGroundGlow);
+
+// киоск
+const kiosk = new Container();
+kiosk.position.set(195, 400);
+iceCreamScene.addChild(kiosk);
+
+const kioskBody = new Graphics()
+  .roundRect(-145, -175, 290, 270, 18)
+  .fill(0xead9d5);
+
+kiosk.addChild(kioskBody);
+
+const kioskInner = new Graphics()
+  .roundRect(-124, -135, 248, 145, 12)
+  .fill(0x2b2028);
+
+kiosk.addChild(kioskInner);
+
+// навес
+const awning = new Container();
+awning.y = -176;
+kiosk.addChild(awning);
+
+for (let i = 0; i < 8; i++) {
+  const stripe = new Graphics()
+    .rect(-144 + i * 36, 0, 36, 40)
+    .fill(i % 2 === 0 ? 0x9d1738 : 0xf4e6e1);
+
+  awning.addChild(stripe);
+}
+
+const awningEdge = new Graphics()
+  .roundRect(-150, 32, 300, 18, 8)
+  .fill(0x7f142f);
+
+awning.addChild(awningEdge);
+
+// вывеска
+const kioskSign = new Text({
+  text: "МОРОЖЕНОЕ",
+  style: {
+    fill: 0x4c2631,
+    fontFamily: "Arial",
+    fontSize: 20,
+    fontWeight: "700",
+    letterSpacing: 1.5,
+  },
+});
+
+kioskSign.anchor.set(0.5);
+kioskSign.position.set(0, 40);
+kiosk.addChild(kioskSign);
+
+// прилавок
+const counter = new Graphics()
+  .roundRect(-135, 0, 270, 28, 8)
+  .fill(0xc8aaa7);
+
+kiosk.addChild(counter);
+
+// стаканчики/мороженое в витрине
+const flavors = [
+  0xff7c9c,
+  0x75c9d8,
+  0xf8d45f,
+  0x9d7cdf,
+  0x6fc58b,
+  0xf08c5b,
+  0xc75f8c,
+];
+
+const flavorItems = [];
+
+flavors.forEach((color, i) => {
+  const item = new Container();
+
+  item.x = -102 + i * 34;
+  item.y = -68;
+
+  const cone = new Graphics()
+    .moveTo(-8, 11)
+    .lineTo(8, 11)
+    .lineTo(0, 40)
+    .closePath()
+    .fill(0xd7a369);
+
+  const scoop = new Graphics()
+    .circle(0, 5, 14)
+    .fill(color);
+
+  const shine = new Graphics()
+    .circle(-4, 1, 3)
+    .fill({
+      color: 0xffffff,
+      alpha: 0.28,
+    });
+
+  item.addChild(cone, scoop, shine);
+  kiosk.addChild(item);
+  flavorItems.push(item);
+});
+
+// БЕЛЫЙ ПЛОМБИР — специально отдельно
+const plombir = new Container();
+plombir.position.set(101, -64);
+kiosk.addChild(plombir);
+
+const plombirCone = new Graphics()
+  .moveTo(-9, 12)
+  .lineTo(9, 12)
+  .lineTo(0, 44)
+  .closePath()
+  .fill(0xd7a369);
+
+const plombirScoop = new Graphics()
+  .circle(0, 5, 15)
+  .fill(0xfffbf2);
+
+const plombirShine = new Graphics()
+  .circle(-5, 0, 4)
+  .fill({
+    color: 0xffffff,
+    alpha: 0.6,
+  });
+
+plombir.addChild(
+  plombirCone,
+  plombirScoop,
+  plombirShine
+);
+
+// маленькая лампа киоска
+const kioskLampGlow = new Graphics()
+  .circle(0, -112, 90)
+  .fill({
+    color: 0xffc06e,
+    alpha: 0.07,
+  });
+
+kiosk.addChildAt(kioskLampGlow, 1);
+
+gsap.to(kioskLampGlow, {
+  alpha: 0.13,
+  duration: 2,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+// персонажи для сцены киоска
+const iceKessi = createKessi();
+const iceObsid = createObsid();
+const iceDragon = createDragon();
+
+iceKessi.root.position.set(125, 710);
+iceObsid.root.position.set(245, 710);
+iceDragon.root.position.set(320, 735);
+iceDragon.root.scale.set(0.68);
+
+iceCreamScene.addChild(
+  iceKessi.root,
+  iceObsid.root,
+  iceDragon.root
+);
+
+// пломбир в руке Обсида
+const heldPlombir = new Container();
+heldPlombir.alpha = 0;
+heldPlombir.scale.set(0.9);
+heldPlombir.position.set(-28, 5);
+
+const heldCone = new Graphics()
+  .moveTo(-7, 7)
+  .lineTo(7, 7)
+  .lineTo(0, 31)
+  .closePath()
+  .fill(0xd7a369);
+
+const heldScoop = new Graphics()
+  .circle(0, 1, 12)
+  .fill(0xfffbf2);
+
+heldPlombir.addChild(heldCone, heldScoop);
+iceObsid.root.addChild(heldPlombir);
+
+// реплика дракоши
+const dragonBubble = new Container();
+dragonBubble.alpha = 0;
+dragonBubble.position.set(300, 645);
+
+const bubbleBg = new Graphics()
+  .roundRect(-58, -25, 116, 50, 18)
+  .fill({
+    color: 0xffffff,
+    alpha: 0.94,
+  });
+
+const bubbleTail = new Graphics()
+  .moveTo(27, 22)
+  .lineTo(43, 39)
+  .lineTo(13, 26)
+  .closePath()
+  .fill({
+    color: 0xffffff,
+    alpha: 0.94,
+  });
+
+const bubbleText = new Text({
+  text: "Понятно.",
+  style: {
+    fill: 0x2a2026,
+    fontFamily: "Arial",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+});
+
+bubbleText.anchor.set(0.5);
+
+dragonBubble.addChild(
+  bubbleBg,
+  bubbleTail,
+  bubbleText
+);
+
+iceCreamScene.addChild(dragonBubble);
+
+// подсказка внизу
+const iceHint = new Text({
+  text: "",
+  style: {
+    fill: 0xf6d9e4,
+    fontFamily: "Arial",
+    fontSize: 16,
+    align: "center",
+    wordWrap: true,
+    wordWrapWidth: 330,
+  },
+});
+
+iceHint.anchor.set(0.5);
+iceHint.position.set(W / 2, 805);
+iceCreamScene.addChild(iceHint);
+
+// =====================================================
+// АНИМАЦИЯ СЦЕНЫ МОРОЖЕНОГО
+// =====================================================
+
+function showIceCreamScene() {
+  iceCreamScene.visible = true;
+  iceCreamScene.alpha = 0;
+
+  iceKessi.root.alpha = 0;
+  iceObsid.root.alpha = 0;
+  iceDragon.root.alpha = 0;
+
+  iceKessi.root.x = 40;
+  iceObsid.root.x = 350;
+  iceDragon.root.x = 430;
+
+  const tl = gsap.timeline();
+
+  tl.to(park, {
+    alpha: 0,
+    duration: 0.9,
+    ease: "power2.inOut",
+  });
+
+  tl.to(
+    iceCreamScene,
+    {
+      alpha: 1,
+      duration: 1.1,
+      ease: "power2.inOut",
+    },
+    0.4
+  );
+
+  // герои подходят к киоску
+  tl.to(
+    iceKessi.root,
+    {
+      alpha: 1,
+      x: 125,
+      duration: 1.1,
+      ease: "power2.out",
+    },
+    1
+  );
+
+  tl.to(
+    iceObsid.root,
+    {
+      alpha: 1,
+      x: 245,
+      duration: 1.1,
+      ease: "power2.out",
+    },
+    1.15
+  );
+
+  // дракоша немного позже
+  tl.to(
+    iceDragon.root,
+    {
+      alpha: 1,
+      x: 320,
+      duration: 0.9,
+      ease: "back.out(1.6)",
+    },
+    1.8
+  );
+
+  // разноцветное мороженое немного "манит"
+  flavorItems.forEach((item, index) => {
+    tl.to(
+      item.scale,
+      {
+        x: 1.12,
+        y: 1.12,
+        duration: 0.18,
+        yoyo: true,
+        repeat: 1,
+      },
+      2.35 + index * 0.06
+    );
+  });
+
+  // дракоша смотрит на ассортимент
+  tl.to(
+    iceDragon.root,
+    {
+      rotation: -0.08,
+      duration: 0.25,
+      yoyo: true,
+      repeat: 1,
+    },
+    2.8
+  );
+
+  // а Обсид выбирает именно белый пломбир
+  tl.to(
+    plombir.scale,
+    {
+      x: 1.35,
+      y: 1.35,
+      duration: 0.3,
+      ease: "back.out(2)",
+    },
+    3.5
+  );
+
+  tl.to(
+    plombir,
+    {
+      alpha: 0.18,
+      duration: 0.3,
+    },
+    3.9
+  );
+
+  tl.to(
+    heldPlombir,
+    {
+      alpha: 1,
+      duration: 0.35,
+    },
+    3.9
+  );
+
+  // Обсид чуть поворачивается к Кэсси
+  tl.to(
+    iceObsid.root,
+    {
+      x: 226,
+      duration: 0.45,
+      ease: "power2.out",
+    },
+    4.15
+  );
+
+  // пломбир как будто протягивается ей
+  tl.to(
+    heldPlombir,
+    {
+      x: -48,
+      y: -4,
+      rotation: -0.14,
+      duration: 0.55,
+      ease: "power2.out",
+    },
+    4.3
+  );
+
+  // Кэсси слегка "радуется"
+  tl.to(
+    iceKessi.root,
+    {
+      y: 702,
+      duration: 0.18,
+      repeat: 1,
+      yoyo: true,
+      ease: "sine.inOut",
+    },
+    4.65
+  );
+
+  // дракоша: ассортимент -> пломбир -> Кэсси
+  tl.to(
+    iceDragon.root,
+    {
+      x: 307,
+      rotation: 0.12,
+      duration: 0.35,
+    },
+    5
+  );
+
+  tl.to(
+    iceDragon.root,
+    {
+      rotation: -0.12,
+      duration: 0.35,
+    },
+    5.4
+  );
+
+  tl.to(
+    dragonBubble,
+    {
+      alpha: 1,
+      y: 635,
+      duration: 0.45,
+      ease: "back.out(1.5)",
+    },
+    5.85
+  );
+
+  tl.to(
+    dragonBubble,
+    {
+      alpha: 0,
+      duration: 0.45,
+    },
+    7.4
+  );
+
+  // финальная маленькая пауза сцены
+  tl.call(() => {
+    iceHint.text = "ну всё, идём дальше ♡";
+  }, null, 7.8);
+
+  tl.fromTo(
+    iceHint,
+    {
+      alpha: 0,
+      y: 814,
+    },
+    {
+      alpha: 1,
+      y: 805,
+      duration: 0.6,
+    },
+    7.8
+  );
+}
+
+// =====================================================
 // НАЖАЛИ — ПОШЛИ
 // =====================================================
 
@@ -1109,7 +1642,7 @@ walkTap.on("pointertap", () => {
   startLegAnimation(kessi);
   startLegAnimation(obsid);
 
-  // герои немного идут вперёд
+  // герои идут вперёд
   gsap.to(kessi.root, {
     y: 620,
     x: 172,
@@ -1128,7 +1661,7 @@ walkTap.on("pointertap", () => {
     ease: "power1.inOut",
   });
 
-  // дракоша сначала тупит :)
+  // дракоша сначала отстаёт
   gsap.to(dragon.root, {
     y: 705,
     duration: 1,
@@ -1136,7 +1669,7 @@ walkTap.on("pointertap", () => {
     ease: "power1.inOut",
   });
 
-  // а потом резко догоняет
+  // потом резко догоняет
   gsap.to(dragon.root, {
     x: 275,
     y: 630,
@@ -1147,7 +1680,7 @@ walkTap.on("pointertap", () => {
     ease: "back.out(1.4)",
   });
 
-  // камера как будто едет вместе с ними
+  // движение камеры
   gsap.to(path.scale, {
     x: 1.08,
     y: 1.05,
@@ -1167,33 +1700,11 @@ walkTap.on("pointertap", () => {
     ease: "power1.inOut",
   });
 
-  // закончили идти
-  gsap.delayedCall(4.1, () => {
+  // дошли — переходим к мороженому
+  gsap.delayedCall(4.15, () => {
     stopLegAnimation(kessi);
     stopLegAnimation(obsid);
-
-    // временная надпись —
-    // следующей сценой здесь будет киоск с пломбиром
-    const nextText = new Text({
-      text: "Кажется, впереди кое-что есть…",
-      style: {
-        fill: 0xffffff,
-        fontFamily: "Arial",
-        fontSize: 19,
-        align: "center",
-      },
-    });
-
-    nextText.anchor.set(0.5);
-    nextText.position.set(W / 2, 145);
-    nextText.alpha = 0;
-
-    park.addChild(nextText);
-
-    gsap.to(nextText, {
-      alpha: 1,
-      duration: 0.8,
-    });
+    showIceCreamScene();
   });
 });
 
@@ -1412,9 +1923,6 @@ walkTap.on("pointertap", () => {
 
     tl.to(
       parkText,
-      tl.call(() => {
-  showCharacters();
-}, null, 8.3);
       {
         alpha: 1,
         y: 110,
@@ -1422,6 +1930,10 @@ walkTap.on("pointertap", () => {
       },
       7.5
     );
+
+    tl.call(() => {
+      showCharacters();
+    }, null, 8.3);
   });
 }
 
