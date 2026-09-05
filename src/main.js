@@ -464,7 +464,7 @@ async function start() {
   quoteScene.addChild(quote1);
 
   const quote2 = new Text({
-    text: "Так что несколько километров —\nвообще не аргумент.",
+    text: "Так что несколько километров -\nвообще ерундень.",
     style: {
       fill: 0xf4c7d7,
       fontFamily: "Arial",
@@ -1613,7 +1613,7 @@ const bubbleTail = new Graphics()
   });
 
 const bubbleText = new Text({
-  text: "Понятно.",
+  text: "А мне,але",
   style: {
     fill: 0x2a2026,
     fontFamily: "Arial",
@@ -2134,7 +2134,7 @@ const cameraBg = new Graphics()
   .stroke({ width: 1, color: 0xf3c3d4, alpha: 0.55 });
 
 const cameraText = new Text({
-  text: "📷  сделать фото",
+  text: "📷  щелк на память",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
@@ -2526,7 +2526,7 @@ cinemaHintBg.position.set(W / 2, 746);
 cinemaScene.addChild(cinemaHintBg);
 
 const cinemaHint = new Text({
-  text: "ЗАХОДИМ В ЗАЛ  ›",
+  text: "ручку,пойдем  ›",
   style: {
     fill: 0xffffff,
     fontSize: 17,
@@ -2774,7 +2774,7 @@ nightDragon.root.scale.set(0.72);
 nightScene.addChild(nightKessi.root, nightObsid.root, nightDragon.root);
 
 const nightText1 = new Text({
-  text: "Вот бы сейчас действительно так.",
+  text: "Когда я приеду этот проект будет реализован)",
   style: {
     fill: 0xffffff,
     fontSize: 21,
@@ -2790,7 +2790,7 @@ nightText1.alpha = 0;
 nightScene.addChild(nightText1);
 
 const nightText2 = new Text({
-  text: "Но пока — это жизнь.",
+  text: "Но пока - это жизнь...)",
   style: {
     fill: 0xe7c4d1,
     fontSize: 20,
@@ -2801,16 +2801,7 @@ nightText2.anchor.set(0.5);
 nightText2.position.set(W / 2, 220);
 nightText2.alpha = 0;
 nightScene.addChild(nightText2);
-
-const nightText3 = new Text({
-  text: "А ничего невозможного\nвсё равно нет.",
-  style: {
-    fill: 0xffffff,
-    fontSize: 23,
-    fontFamily: "Arial",
-    align: "center",
-    lineHeight: 32,
-  },
+  
 });
 nightText3.anchor.set(0.5);
 nightText3.position.set(W / 2, 300);
@@ -2854,7 +2845,7 @@ const finalGlow = new Graphics()
 finalScene.addChild(finalGlow);
 
 const finalTitle = new Text({
-  text: "И ещё кое-что.",
+  text: "Ой, ещё кое-что.",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
@@ -3012,7 +3003,7 @@ const photoDivider = new Graphics()
 photoCard.addChild(photoDivider);
 
 const photoPhrase = new Text({
-  text: "Первую пока пришлось нарисовать.\\nОстальные предлагаю делать уже самим.",
+  text: "Первую пока пришлось нарисовать.\\nОстальные не отвертишься, придется фоткаться",
   style: {
     fill: 0x5c3a49,
     fontFamily: "Arial",
@@ -3325,7 +3316,7 @@ gsap.to(finaleHeart, {
 // =====================================================
 
 const finaleTitle = new Text({
-  text: "С днём рождения, Даш. ♡",
+  text: "С днём рождения, моя маленькая ♡",
   style: {
     fill: 0xffe7ef,
     fontFamily: "Arial",
@@ -3341,9 +3332,8 @@ birthdayScene.addChild(finaleTitle);
 
 const finaleText1 = new Text({
   text:
-    "Пусть сегодня вокруг тебя будет\n" +
-    "как можно больше того,\n" +
-    "что заставляет тебя улыбаться.",
+    "Пусть этот интерактив подарит тебе улыбку\n" +
+    "а глазки испытают эстетику,\n",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
@@ -3399,7 +3389,7 @@ birthdayScene.addChild(finaleText3);
 
 // самая последняя фраза
 const finaleLastLine = new Text({
-  text: "Нет ничего невозможного.",
+  text: "Я обожаю тебя, радость. Ты мой дом.",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
