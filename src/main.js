@@ -2402,7 +2402,7 @@ ticketMovie.position.set(16, 34);
 realTicket.addChild(ticketMovie);
 
 const ticketInfo = new Text({
-  text: "05.09.2026   •   20:30\nЗАЛ 2   •   РЯД 5   •   МЕСТА 7–8",
+  text: "06.09.2026   •   20:30\nЗАЛ 2   •   РЯД 5   •   МЕСТА 7–8",
   style: {
     fill: 0x5d474e,
     fontFamily: "Arial",
@@ -3309,7 +3309,8 @@ gsap.to(finaleHeart, {
 // =====================================================
 
 const finaleTitle = new Text({
-  text: "С днём рождения, моя маленькая ♡",
+  text: "моя маленькая
+    "С днем рождения♡",
   style: {
     fill: 0xffe7ef,
     fontFamily: "Arial",
