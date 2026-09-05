@@ -386,7 +386,7 @@ async function start() {
       fontFamily: "Arial",
       fontWeight: "600",
     },
- 
+  });
 
   tagText.anchor.set(0.5);
   tagText.x = -3;
@@ -444,7 +444,7 @@ async function start() {
   quoteScene.addChild(quoteBg);
 
   const quote1 = new Text({
-    text: "Если захотеть...\nможно и в космос полететь)",
+    text: "Если захотеть -\nможно и в космос полететь)",
     style: {
       fill: 0xffffff,
       fontFamily: "Arial",
@@ -464,7 +464,7 @@ async function start() {
   quoteScene.addChild(quote1);
 
   const quote2 = new Text({
-    text: "Так что несколько километров \nвообще ерундень.",
+    text: "Так что несколько километров -\nвообще ерундень.",
     style: {
       fill: 0xf4c7d7,
       fontFamily: "Arial",
@@ -2800,12 +2800,7 @@ nightText2.anchor.set(0.5);
 nightText2.position.set(W / 2, 220);
 nightText2.alpha = 0;
 nightScene.addChild(nightText2);
-  
-});
-nightText3.anchor.set(0.5);
-nightText3.position.set(W / 2, 300);
-nightText3.alpha = 0;
-nightScene.addChild(nightText3);
+
 
 function showNightScene() {
   nightScene.visible = true;
@@ -2815,14 +2810,13 @@ function showNightScene() {
     .to(nightScene, { alpha: 1, duration: 1.2 }, 0.35)
     .to(nightText1, { alpha: 1, y: 148, duration: 0.8 }, 1.2)
     .to(nightText2, { alpha: 1, duration: 0.8 }, 2.7)
-    .to(nightText3, { alpha: 1, duration: 0.9 }, 4.2)
     // Дракоша убегает вперёд и оставляет сцену тихой
     .to(nightDragon.root, {
       x: 440,
       duration: 1.2,
       ease: "power2.in",
-    }, 5.5)
-    .call(() => showFinalGift(), null, 7.2);
+    }, 4.2)
+    .call(() => showFinalGift(), null, 5.9);
 }
 
 // =====================================================
@@ -3002,7 +2996,7 @@ const photoDivider = new Graphics()
 photoCard.addChild(photoDivider);
 
 const photoPhrase = new Text({
-  text: "Первую уже сохранили.\\nОстальные - не отвертишься, придётся фоткаться ♡",
+  text: "Первую уже сохранили.\\nОстальные - не отвертишься, придётся фоткаться в живую ♡",
   style: {
     fill: 0x5c3a49,
     fontFamily: "Arial",
