@@ -3018,7 +3018,7 @@ miniGift.on("pointertap", () => {
 });
 
 // =====================================================
-// СЦЕНА 9 — 23 / ДЕНЬ РОЖДЕНИЯ
+// СЦЕНА 9 — АТМОСФЕРНЫЙ ПРАЗДНИЧНЫЙ ФИНАЛ
 // =====================================================
 
 const birthdayScene = new Container();
@@ -3026,98 +3026,430 @@ birthdayScene.visible = false;
 birthdayScene.alpha = 0;
 world.addChild(birthdayScene);
 
+// ночное небо
 const birthdayBg = new Graphics()
-  .rect(0, 0, W, H).fill(0x08070c);
+  .rect(0, 0, W, H)
+  .fill(0x090810);
 birthdayScene.addChild(birthdayBg);
 
-const birthdayGlow = new Graphics()
-  .circle(W / 2, 370, 240)
-  .fill({ color: 0xc51d58, alpha: 0.15 });
-birthdayScene.addChild(birthdayGlow);
+// мягкий градиентный свет города
+const cityGlowA = new Graphics()
+  .circle(65, 620, 230)
+  .fill({ color: 0x8f315e, alpha: 0.10 });
 
-const big23 = new Text({
-  text: "23",
+const cityGlowB = new Graphics()
+  .circle(330, 560, 210)
+  .fill({ color: 0xe68a66, alpha: 0.07 });
+
+birthdayScene.addChild(cityGlowA, cityGlowB);
+
+// звёзды
+const birthdayStars = new Container();
+birthdayScene.addChild(birthdayStars);
+
+for (let i = 0; i < 46; i++) {
+  const sx = 12 + Math.random() * (W - 24);
+  const sy = 20 + Math.random() * 360;
+  const sr = 0.8 + Math.random() * 1.4;
+
+  const star = new Graphics()
+    .circle(sx, sy, sr)
+    .fill({
+      color: i % 5 === 0 ? 0xffd8be : 0xffffff,
+      alpha: 0.36 + Math.random() * 0.5,
+    });
+
+  birthdayStars.addChild(star);
+
+  gsap.to(star, {
+    alpha: 0.15 + Math.random() * 0.45,
+    duration: 1.5 + Math.random() * 2.8,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+}
+
+// луна
+const birthdayMoonGlow = new Graphics()
+  .circle(320, 106, 58)
+  .fill({ color: 0xffe6c6, alpha: 0.05 });
+
+const birthdayMoon = new Graphics()
+  .circle(320, 106, 24)
+  .fill({ color: 0xffebd2, alpha: 0.88 });
+
+birthdayScene.addChild(birthdayMoonGlow, birthdayMoon);
+
+gsap.to(birthdayMoonGlow, {
+  alpha: 0.11,
+  duration: 3.5,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+// дальний город
+const finaleCity = new Container();
+birthdayScene.addChild(finaleCity);
+
+const finaleBuildings = [
+  [0, 520, 42, 150],
+  [36, 565, 52, 110],
+  [82, 535, 48, 140],
+  [124, 585, 35, 90],
+  [154, 548, 58, 128],
+  [205, 572, 42, 105],
+  [243, 525, 55, 154],
+  [294, 555, 45, 122],
+  [334, 500, 56, 176],
+];
+
+finaleBuildings.forEach(([x, y, w, h], index) => {
+  const building = new Graphics()
+    .rect(x, y, w, h)
+    .fill(index % 2 === 0 ? 0x17151e : 0x1d1822);
+
+  finaleCity.addChild(building);
+
+  // окна
+  for (let yy = y + 14; yy < y + h - 10; yy += 18) {
+    for (let xx = x + 9; xx < x + w - 6; xx += 15) {
+      if (Math.random() > 0.58) {
+        finaleCity.addChild(
+          new Graphics()
+            .roundRect(xx, yy, 4, 6, 1)
+            .fill({
+              color: Math.random() > 0.5 ? 0xffc584 : 0xf2a6bb,
+              alpha: 0.45 + Math.random() * 0.35,
+            })
+        );
+      }
+    }
+  }
+});
+
+// лёгкая дымка над городом
+const skylineMist = new Graphics()
+  .rect(0, 475, W, 165)
+  .fill({ color: 0xe8a5ba, alpha: 0.025 });
+birthdayScene.addChild(skylineMist);
+
+// праздничные светящиеся частицы
+const finaleParticles = new Container();
+birthdayScene.addChild(finaleParticles);
+
+for (let i = 0; i < 34; i++) {
+  const p = new Graphics()
+    .circle(0, 0, 1.8 + Math.random() * 2.8)
+    .fill({
+      color: i % 3 === 0 ? 0xffd3a2 : i % 3 === 1 ? 0xf4a2bf : 0xffffff,
+      alpha: 0.55 + Math.random() * 0.25,
+    });
+
+  p.position.set(
+    12 + Math.random() * (W - 24),
+    430 + Math.random() * 330
+  );
+
+  finaleParticles.addChild(p);
+
+  gsap.to(p, {
+    y: p.y - 80 - Math.random() * 150,
+    x: p.x + (-25 + Math.random() * 50),
+    alpha: 0,
+    duration: 5 + Math.random() * 5,
+    repeat: -1,
+    delay: Math.random() * 4,
+    ease: "sine.out",
+    onRepeat: () => {
+      p.x = 12 + Math.random() * (W - 24);
+      p.y = 650 + Math.random() * 150;
+      p.alpha = 0.55 + Math.random() * 0.25;
+    },
+  });
+}
+
+// маленькие "праздничные искры" — не агрессивный салют, а атмосферные вспышки
+const sparkleLayer = new Container();
+birthdayScene.addChild(sparkleLayer);
+
+function addFinaleSpark(x, y, delay = 0) {
+  const spark = new Container();
+  spark.position.set(x, y);
+  sparkleLayer.addChild(spark);
+
+  for (let i = 0; i < 8; i++) {
+    const a = (Math.PI * 2 * i) / 8;
+    const ray = new Graphics()
+      .roundRect(-1, -1, 2, 10, 1)
+      .fill({
+        color: i % 2 === 0 ? 0xffd2a8 : 0xf7afca,
+        alpha: 0.78,
+      });
+
+    ray.rotation = a;
+    ray.y = -5;
+    spark.addChild(ray);
+  }
+
+  spark.alpha = 0;
+  spark.scale.set(0.25);
+
+  gsap.timeline({ repeat: -1, repeatDelay: 5.5 + Math.random() * 3 })
+    .to(spark, {
+      alpha: 1,
+      duration: 0.18,
+      delay,
+    })
+    .to(spark.scale, {
+      x: 1,
+      y: 1,
+      duration: 0.65,
+      ease: "power2.out",
+    }, "<")
+    .to(spark, {
+      alpha: 0,
+      duration: 0.7,
+    }, "-=0.2")
+    .set(spark.scale, { x: 0.25, y: 0.25 });
+}
+
+addFinaleSpark(68, 208, 1.2);
+addFinaleSpark(180, 145, 3.4);
+addFinaleSpark(300, 245, 2.1);
+
+// герои вместе внизу кадра
+const finaleKessi = createKessi();
+const finaleObsid = createObsid();
+const finaleDragon = createDragon();
+
+finaleKessi.root.position.set(158, 765);
+finaleObsid.root.position.set(225, 765);
+finaleDragon.root.position.set(290, 775);
+
+finaleKessi.root.scale.set(0.64);
+finaleObsid.root.scale.set(0.64);
+finaleDragon.root.scale.set(0.50);
+
+// чуть ближе друг к другу
+finaleKessi.root.rotation = -0.015;
+finaleObsid.root.rotation = 0.015;
+
+birthdayScene.addChild(
+  finaleKessi.root,
+  finaleObsid.root,
+  finaleDragon.root
+);
+
+// маленькое сердечко между ними
+const finaleHeart = new Text({
+  text: "♡",
   style: {
-    fill: 0xffffff,
+    fill: 0xf5b5cb,
     fontFamily: "Arial",
-    fontSize: 150,
-    fontWeight: "700",
+    fontSize: 18,
   },
 });
-big23.anchor.set(0.5);
-big23.position.set(W / 2, 340);
-birthdayScene.addChild(big23);
+finaleHeart.anchor.set(0.5);
+finaleHeart.position.set(194, 686);
+birthdayScene.addChild(finaleHeart);
 
-const birthdayText = new Text({
+gsap.to(finaleHeart, {
+  alpha: 0.45,
+  duration: 1.7,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+// =====================================================
+// ТЕКСТ ФИНАЛА
+// Эти строки ты потом можешь просто заменить на свои.
+// =====================================================
+
+const finaleTitle = new Text({
   text: "С днём рождения, Даш. ♡",
   style: {
-    fill: 0xf6cedd,
+    fill: 0xffe3ed,
     fontFamily: "Arial",
-    fontSize: 25,
-    fontWeight: "600",
+    fontSize: 28,
+    fontWeight: "700",
+    align: "center",
   },
 });
-birthdayText.anchor.set(0.5);
-birthdayText.position.set(W / 2, 505);
-birthdayScene.addChild(birthdayText);
+finaleTitle.anchor.set(0.5);
+finaleTitle.position.set(W / 2, 305);
+finaleTitle.alpha = 0;
+birthdayScene.addChild(finaleTitle);
 
-const finalPhrase = new Text({
-  text: "Если захотеть — можно и в космос полететь.\nНет ничего невозможного.\nРасстояние тогда тем более переживём.",
+const finaleText1 = new Text({
+  text:
+    "Пусть сегодня вокруг тебя будет\n" +
+    "как можно больше того,\n" +
+    "что заставляет тебя улыбаться.",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
     fontSize: 17,
     align: "center",
-    lineHeight: 27,
+    lineHeight: 25,
+    wordWrap: true,
+    wordWrapWidth: 330,
+  },
+});
+finaleText1.anchor.set(0.5);
+finaleText1.position.set(W / 2, 405);
+finaleText1.alpha = 0;
+birthdayScene.addChild(finaleText1);
+
+const finaleText2 = new Text({
+  text:
+    "Я очень хочу, чтобы впереди у тебя\n" +
+    "было много моментов,\n" +
+    "которые захочется запомнить.",
+  style: {
+    fill: 0xf6dce5,
+    fontFamily: "Arial",
+    fontSize: 16,
+    align: "center",
+    lineHeight: 24,
     wordWrap: true,
     wordWrapWidth: 335,
   },
 });
-finalPhrase.anchor.set(0.5);
-finalPhrase.position.set(W / 2, 625);
-birthdayScene.addChild(finalPhrase);
+finaleText2.anchor.set(0.5);
+finaleText2.position.set(W / 2, 485);
+finaleText2.alpha = 0;
+birthdayScene.addChild(finaleText2);
 
-const finalDragon = createDragon();
-finalDragon.root.position.set(325, 435);
-finalDragon.root.scale.set(0.8);
-birthdayScene.addChild(finalDragon.root);
+const finaleText3 = new Text({
+  text:
+    "А эту маленькую историю\n" +
+    "считай просто первым кадром. ♡",
+  style: {
+    fill: 0xffd1df,
+    fontFamily: "Arial",
+    fontSize: 17,
+    fontWeight: "600",
+    align: "center",
+    lineHeight: 26,
+  },
+});
+finaleText3.anchor.set(0.5);
+finaleText3.position.set(W / 2, 565);
+finaleText3.alpha = 0;
+birthdayScene.addChild(finaleText3);
+
+// самая последняя фраза
+const finaleLastLine = new Text({
+  text: "Нет ничего невозможного.",
+  style: {
+    fill: 0xffffff,
+    fontFamily: "Arial",
+    fontSize: 19,
+    fontWeight: "700",
+    align: "center",
+  },
+});
+finaleLastLine.anchor.set(0.5);
+finaleLastLine.position.set(W / 2, 628);
+finaleLastLine.alpha = 0;
+birthdayScene.addChild(finaleLastLine);
+
+// едва заметная подпись в самом низу
+const finaleSmall = new Text({
+  text: "06.09.2026",
+  style: {
+    fill: 0xc59aa9,
+    fontFamily: "Arial",
+    fontSize: 11,
+    letterSpacing: 1.5,
+  },
+});
+finaleSmall.anchor.set(0.5);
+finaleSmall.position.set(W / 2, 720);
+finaleSmall.alpha = 0;
+birthdayScene.addChild(finaleSmall);
 
 function showBirthdayFinale() {
   birthdayScene.visible = true;
 
-  gsap.timeline()
-    .to(finalScene, { alpha: 0, duration: 0.9 })
-    .to(birthdayScene, { alpha: 1, duration: 1.2 }, 0.35)
-    .from(big23.scale, {
-      x: 0.4,
-      y: 0.4,
-      duration: 0.9,
-      ease: "back.out(1.6)",
-    }, 0.8)
-    .from(finalDragon.root, {
-      x: 430,
-      rotation: 0.4,
-      duration: 0.9,
-      ease: "back.out(1.8)",
-    }, 1.5)
-    // финальный гэг: дракоша "толкает" цифры
-    .to(big23, {
-      rotation: -0.035,
-      x: W / 2 - 5,
-      duration: 0.18,
-      repeat: 1,
-      yoyo: true,
-    }, 2.15)
-    .from(birthdayText, {
-      alpha: 0,
-      y: 525,
-      duration: 0.8,
-    }, 2.5)
-    .from(finalPhrase, {
-      alpha: 0,
-      y: 645,
-      duration: 1,
-    }, 3.2);
+  // Всё появляется медленно и по слоям.
+  const tl = gsap.timeline();
+
+  tl.to(finalScene, {
+    alpha: 0,
+    duration: 1.3,
+    ease: "sine.inOut",
+  });
+
+  tl.to(birthdayScene, {
+    alpha: 1,
+    duration: 1.8,
+    ease: "sine.inOut",
+  }, 0.45);
+
+  tl.from([finaleKessi.root, finaleObsid.root, finaleDragon.root], {
+    y: 805,
+    alpha: 0,
+    duration: 1.6,
+    ease: "power2.out",
+    stagger: 0.15,
+  }, 1.15);
+
+  tl.to(finaleTitle, {
+    alpha: 1,
+    y: 292,
+    duration: 1.2,
+    ease: "power2.out",
+  }, 1.9);
+
+  tl.to(finaleText1, {
+    alpha: 1,
+    y: 395,
+    duration: 1.1,
+    ease: "power2.out",
+  }, 3.5);
+
+  tl.to({}, { duration: 1.7 });
+
+  tl.to(finaleText2, {
+    alpha: 1,
+    y: 475,
+    duration: 1.1,
+    ease: "power2.out",
+  });
+
+  tl.to({}, { duration: 1.6 });
+
+  tl.to(finaleText3, {
+    alpha: 1,
+    y: 555,
+    duration: 1,
+    ease: "power2.out",
+  });
+
+  tl.to({}, { duration: 1.5 });
+
+  tl.to(finaleLastLine, {
+    alpha: 1,
+    y: 618,
+    duration: 1.1,
+    ease: "power2.out",
+  });
+
+  tl.to(finaleSmall, {
+    alpha: 0.75,
+    duration: 1.2,
+  }, "-=0.25");
+
+  // очень мягкое финальное дыхание сцены
+  tl.to([cityGlowA, cityGlowB], {
+    alpha: 0.16,
+    duration: 2.8,
+    ease: "sine.inOut",
+  }, "-=0.6");
 }
 
 
