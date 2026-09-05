@@ -386,7 +386,7 @@ async function start() {
       fontFamily: "Arial",
       fontWeight: "600",
     },
-  });
+ 
 
   tagText.anchor.set(0.5);
   tagText.x = -3;
