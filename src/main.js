@@ -390,7 +390,7 @@ async function start() {
   quoteScene.addChild(quoteBg);
 
   const quote1 = new Text({
-    text: "Если захотеть —\nможно и в космос полететь.",
+    text: "Если захотеть...\nможно и в космос полететь)",
     style: {
       fill: 0xffffff,
       fontFamily: "Arial",
@@ -683,6 +683,519 @@ async function start() {
   parkText.alpha = 0;
 
   park.addChild(parkText);
+  // =====================================================
+// ПЕРСОНАЖИ
+// =====================================================
+
+function createKessi() {
+  const c = new Container();
+
+  // ноги
+  const leg1 = new Graphics()
+    .roundRect(-13, 42, 9, 34, 5)
+    .fill(0x17131c);
+
+  const leg2 = new Graphics()
+    .roundRect(4, 42, 9, 34, 5)
+    .fill(0x17131c);
+
+  // тело
+  const body = new Graphics()
+    .roundRect(-25, -3, 50, 56, 18)
+    .fill(0xf2e8ec);
+
+  // голова
+  const head = new Graphics()
+    .circle(0, -31, 25)
+    .fill(0xf3c7b3);
+
+  // волосы
+  const hairBack = new Graphics()
+    .ellipse(0, -23, 31, 39)
+    .fill(0x17131b);
+
+  hairBack.zIndex = -1;
+
+  const hairTop = new Graphics()
+    .arc(0, -32, 26, Math.PI, Math.PI * 2)
+    .lineTo(24, -19)
+    .lineTo(-24, -19)
+    .closePath()
+    .fill(0x19131b);
+
+  // глаза
+  const eyeL = new Graphics()
+    .circle(-8, -31, 3)
+    .fill(0x6ba9e8);
+
+  const eyeR = new Graphics()
+    .circle(8, -31, 3)
+    .fill(0x6ba9e8);
+
+  // улыбка
+  const smile = new Graphics()
+    .moveTo(-5, -19)
+    .quadraticCurveTo(0, -15, 5, -19)
+    .stroke({
+      width: 1.4,
+      color: 0x8c4b56,
+    });
+
+  c.sortableChildren = true;
+
+  c.addChild(
+    hairBack,
+    leg1,
+    leg2,
+    body,
+    head,
+    hairTop,
+    eyeL,
+    eyeR,
+    smile
+  );
+
+  return {
+    root: c,
+    leg1,
+    leg2,
+  };
+}
+
+function createObsid() {
+  const c = new Container();
+
+  // ноги
+  const leg1 = new Graphics()
+    .roundRect(-14, 45, 10, 36, 5)
+    .fill(0x111117);
+
+  const leg2 = new Graphics()
+    .roundRect(4, 45, 10, 36, 5)
+    .fill(0x111117);
+
+  // худи
+  const body = new Graphics()
+    .roundRect(-28, -5, 56, 61, 18)
+    .fill(0x202027);
+
+  // голова
+  const head = new Graphics()
+    .circle(0, -34, 26)
+    .fill(0xe2b49e);
+
+  // кепка
+  const cap = new Graphics()
+    .arc(0, -39, 27, Math.PI, Math.PI * 2)
+    .lineTo(26, -30)
+    .lineTo(-26, -30)
+    .closePath()
+    .fill(0x111116);
+
+  const visor = new Graphics()
+    .ellipse(14, -31, 22, 5)
+    .fill(0x101015);
+
+  // глаза
+  const eyeL = new Graphics()
+    .circle(-8, -34, 2.3)
+    .fill(0x282329);
+
+  const eyeR = new Graphics()
+    .circle(8, -34, 2.3)
+    .fill(0x282329);
+
+  c.addChild(
+    leg1,
+    leg2,
+    body,
+    head,
+    cap,
+    visor,
+    eyeL,
+    eyeR
+  );
+
+  return {
+    root: c,
+    leg1,
+    leg2,
+  };
+}
+
+function createDragon() {
+  const c = new Container();
+
+  // хвост
+  const tail = new Graphics()
+    .moveTo(20, 12)
+    .quadraticCurveTo(42, 12, 38, -5)
+    .quadraticCurveTo(34, 8, 23, 5)
+    .fill(0x1d2128);
+
+  // тело
+  const body = new Graphics()
+    .ellipse(0, 8, 23, 18)
+    .fill(0x242932);
+
+  // голова
+  const head = new Graphics()
+    .circle(0, -12, 18)
+    .fill(0x2a3039);
+
+  // рожки
+  const horn1 = new Graphics()
+    .moveTo(-12, -26)
+    .lineTo(-6, -40)
+    .lineTo(-2, -24)
+    .fill(0x171b22);
+
+  const horn2 = new Graphics()
+    .moveTo(12, -26)
+    .lineTo(7, -40)
+    .lineTo(2, -24)
+    .fill(0x171b22);
+
+  // глаза
+  const eyeL = new Graphics()
+    .circle(-6, -12, 3)
+    .fill(0xf4c568);
+
+  const eyeR = new Graphics()
+    .circle(6, -12, 3)
+    .fill(0xf4c568);
+
+  // крылья
+  const wingL = new Graphics()
+    .moveTo(-17, 1)
+    .lineTo(-37, -8)
+    .lineTo(-25, 13)
+    .closePath()
+    .fill(0x343b46);
+
+  const wingR = new Graphics()
+    .moveTo(17, 1)
+    .lineTo(37, -8)
+    .lineTo(25, 13)
+    .closePath()
+    .fill(0x343b46);
+
+  c.addChild(
+    tail,
+    wingL,
+    wingR,
+    body,
+    head,
+    horn1,
+    horn2,
+    eyeL,
+    eyeR
+  );
+
+  return {
+    root: c,
+    wingL,
+    wingR,
+  };
+}
+
+// =====================================================
+// СТАВИМ ПЕРСОНАЖЕЙ В ПАРК
+// =====================================================
+
+const kessi = createKessi();
+const obsid = createObsid();
+const dragon = createDragon();
+
+kessi.root.position.set(145, 730);
+obsid.root.position.set(245, 730);
+
+dragon.root.position.set(320, 755);
+dragon.root.scale.set(0.7);
+
+kessi.root.alpha = 0;
+obsid.root.alpha = 0;
+dragon.root.alpha = 0;
+
+park.addChild(
+  kessi.root,
+  obsid.root,
+  dragon.root
+);
+
+// =====================================================
+// ТЕКСТ "ТЫК"
+// =====================================================
+
+const walkHint = new Text({
+  text: "тык, чтобы пойти ♡",
+  style: {
+    fill: 0xf8d9e4,
+    fontFamily: "Arial",
+    fontSize: 17,
+    fontWeight: "500",
+  },
+});
+
+walkHint.anchor.set(0.5);
+walkHint.position.set(W / 2, 790);
+walkHint.alpha = 0;
+
+park.addChild(walkHint);
+
+// =====================================================
+// ЗОНА НАЖАТИЯ
+// =====================================================
+
+const walkTap = new Graphics()
+  .rect(0, 0, W, H)
+  .fill({
+    color: 0xffffff,
+    alpha: 0.001,
+  });
+
+walkTap.eventMode = "none";
+walkTap.cursor = "pointer";
+
+park.addChild(walkTap);
+
+// =====================================================
+// ВХОД ПЕРСОНАЖЕЙ
+// =====================================================
+
+function showCharacters() {
+  const tl = gsap.timeline();
+
+  // Обсид приходит справа
+  obsid.root.x = 445;
+
+  tl.to(obsid.root, {
+    alpha: 1,
+    x: 245,
+    duration: 1.5,
+    ease: "power2.out",
+  });
+
+  // Кэсси появляется слева
+  kessi.root.x = -60;
+
+  tl.to(
+    kessi.root,
+    {
+      alpha: 1,
+      x: 145,
+      duration: 1.4,
+      ease: "power2.out",
+    },
+    0.35
+  );
+
+  // дракоша опаздывает :)
+  dragon.root.x = 445;
+
+  tl.to(
+    dragon.root,
+    {
+      alpha: 1,
+      x: 320,
+      duration: 1,
+      ease: "back.out(1.7)",
+    },
+    1.3
+  );
+
+  // небольшая подпрыгивающая остановка дракоши
+  tl.to(
+    dragon.root,
+    {
+      y: dragon.root.y - 13,
+      duration: 0.18,
+      repeat: 1,
+      yoyo: true,
+    },
+    2.15
+  );
+
+  tl.to(
+    walkHint,
+    {
+      alpha: 1,
+      duration: 0.7,
+    },
+    2.3
+  );
+
+  tl.call(() => {
+    walkTap.eventMode = "static";
+  });
+}
+
+// =====================================================
+// МИНИ-АНИМАЦИЯ ХОДЬБЫ
+// =====================================================
+
+function startLegAnimation(character) {
+  gsap.to(character.leg1, {
+    rotation: 0.18,
+    duration: 0.24,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+
+  gsap.to(character.leg2, {
+    rotation: -0.18,
+    duration: 0.24,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+}
+
+function stopLegAnimation(character) {
+  gsap.killTweensOf(character.leg1);
+  gsap.killTweensOf(character.leg2);
+
+  gsap.to(character.leg1, {
+    rotation: 0,
+    duration: 0.15,
+  });
+
+  gsap.to(character.leg2, {
+    rotation: 0,
+    duration: 0.15,
+  });
+}
+
+// крылья дракоши постоянно чуть шевелятся
+gsap.to(dragon.wingL, {
+  rotation: -0.22,
+  duration: 0.45,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+gsap.to(dragon.wingR, {
+  rotation: 0.22,
+  duration: 0.45,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+});
+
+// =====================================================
+// НАЖАЛИ — ПОШЛИ
+// =====================================================
+
+let walking = false;
+
+walkTap.on("pointertap", () => {
+  if (walking) return;
+
+  walking = true;
+  walkTap.eventMode = "none";
+
+  gsap.to(walkHint, {
+    alpha: 0,
+    duration: 0.35,
+  });
+
+  gsap.to(parkText, {
+    alpha: 0,
+    duration: 0.4,
+  });
+
+  startLegAnimation(kessi);
+  startLegAnimation(obsid);
+
+  // герои немного идут вперёд
+  gsap.to(kessi.root, {
+    y: 620,
+    x: 172,
+    scaleX: 0.78,
+    scaleY: 0.78,
+    duration: 4,
+    ease: "power1.inOut",
+  });
+
+  gsap.to(obsid.root, {
+    y: 620,
+    x: 222,
+    scaleX: 0.78,
+    scaleY: 0.78,
+    duration: 4,
+    ease: "power1.inOut",
+  });
+
+  // дракоша сначала тупит :)
+  gsap.to(dragon.root, {
+    y: 705,
+    duration: 1,
+    delay: 0.8,
+    ease: "power1.inOut",
+  });
+
+  // а потом резко догоняет
+  gsap.to(dragon.root, {
+    x: 275,
+    y: 630,
+    scaleX: 0.58,
+    scaleY: 0.58,
+    duration: 1.5,
+    delay: 1.8,
+    ease: "back.out(1.4)",
+  });
+
+  // камера как будто едет вместе с ними
+  gsap.to(path.scale, {
+    x: 1.08,
+    y: 1.05,
+    duration: 4,
+    ease: "power1.inOut",
+  });
+
+  gsap.to(foreground, {
+    x: -18,
+    duration: 4,
+    ease: "power1.inOut",
+  });
+
+  gsap.to(city, {
+    x: 10,
+    duration: 4,
+    ease: "power1.inOut",
+  });
+
+  // закончили идти
+  gsap.delayedCall(4.1, () => {
+    stopLegAnimation(kessi);
+    stopLegAnimation(obsid);
+
+    // временная надпись —
+    // следующей сценой здесь будет киоск с пломбиром
+    const nextText = new Text({
+      text: "Кажется, впереди кое-что есть…",
+      style: {
+        fill: 0xffffff,
+        fontFamily: "Arial",
+        fontSize: 19,
+        align: "center",
+      },
+    });
+
+    nextText.anchor.set(0.5);
+    nextText.position.set(W / 2, 145);
+    nextText.alpha = 0;
+
+    park.addChild(nextText);
+
+    gsap.to(nextText, {
+      alpha: 1,
+      duration: 0.8,
+    });
+  });
+});
 
   // =====================================================
   // ОТКРЫТИЕ КОРОБКИ
@@ -899,6 +1412,9 @@ async function start() {
 
     tl.to(
       parkText,
+      tl.call(() => {
+  showCharacters();
+}, null, 8.3);
       {
         alpha: 1,
         y: 110,
