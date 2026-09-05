@@ -75,7 +75,7 @@ async function start() {
   }
 
 
-  // Кадр для экрана кинотеатра.
+  // Кадр дя экрана кинотеатра.
   // Положи свой JPG в public/bg/rapunzel-frame.jpg.
   // Если файла нет — код не ломается, просто остаётся абстрактный экран.
   let rapunzelTexture = null;
