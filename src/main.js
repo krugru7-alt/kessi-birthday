@@ -1248,8 +1248,8 @@ iceCreamScene.addChild(kiosk);
   // ДЕТАЛИ КИОСКА — свет, банки, меню, неон, полки
   // =====================================================
 
-  const kioskDetails = new Container();
-  iceCreamScene.addChild(kioskDetails);
+  const iceDetailLayer = new Container();
+  iceCreamScene.addChild(iceDetailLayer);
 
   // гирлянда лампочек
   for (let i = 0; i < 11; i++) {
@@ -1262,7 +1262,7 @@ iceCreamScene.addChild(kiosk);
       .circle(bulbX, 246, 12)
       .fill({ color: 0xffd28a, alpha: 0.08 });
 
-    kioskDetails.addChild(bulbGlow, bulb);
+    iceDetailLayer.addChild(bulbGlow, bulb);
 
     gsap.to(bulbGlow, {
       alpha: 0.18,
@@ -1274,17 +1274,17 @@ iceCreamScene.addChild(kiosk);
   }
 
   // полки с баночками/топпингами
-  const shelf = new Graphics()
+  const iceShelfDetail = new Graphics()
     .roundRect(100, 388, 190, 10, 4)
     .fill(0x6d4740);
-  kioskDetails.addChild(shelf);
+  iceDetailLayer.addChild(iceShelfDetail);
 
-  const jarColors = [
+  const iceJarColors = [
     0xf3b4c2, 0xf3d28d, 0xa4c8eb, 0xd2a8e8,
     0xa8d6a2, 0xf0a985, 0xe7c5a9, 0xb8d4cf
   ];
 
-  jarColors.forEach((c, i) => {
+  iceJarColors.forEach((c, i) => {
     const x = 108 + i * 22;
     const jar = new Graphics()
       .roundRect(x, 358, 14, 27, 4)
@@ -1292,22 +1292,22 @@ iceCreamScene.addChild(kiosk);
       .rect(x + 2, 354, 10, 5)
       .fill(0xd9d0c8);
 
-    kioskDetails.addChild(jar);
+    iceDetailLayer.addChild(jar);
   });
 
   // меловая доска с меню
-  const menuBoard = new Container();
-  menuBoard.position.set(42, 295);
-  kioskDetails.addChild(menuBoard);
+  const iceMenuBoard = new Container();
+  iceMenuBoard.position.set(42, 295);
+  iceDetailLayer.addChild(iceMenuBoard);
 
-  const menuBg = new Graphics()
+  const iceMenuBg = new Graphics()
     .roundRect(0, 0, 92, 152, 10)
     .fill(0x231f23)
     .stroke({ width: 1.2, color: 0xc59ea6, alpha: 0.55 });
 
-  menuBoard.addChild(menuBg);
+  iceMenuBoard.addChild(iceMenuBg);
 
-  const menuText = new Text({
+  const iceMenuText = new Text({
     text:
       "ВКУСЫ\n\nПломбир\nШоколад\nКлубника\nФисташка\nКарамель\nМанго",
     style: {
@@ -1317,32 +1317,32 @@ iceCreamScene.addChild(kiosk);
       lineHeight: 18,
     },
   });
-  menuText.position.set(10, 10);
-  menuBoard.addChild(menuText);
+  iceMenuText.position.set(10, 10);
+  iceMenuBoard.addChild(iceMenuText);
 
   // неоновый рожок справа
-  const neonCone = new Container();
-  neonCone.position.set(324, 322);
-  kioskDetails.addChild(neonCone);
+  const iceNeonCone = new Container();
+  iceNeonCone.position.set(324, 322);
+  iceDetailLayer.addChild(iceNeonCone);
 
-  const cone = new Graphics()
+  const iceNeonConeShape = new Graphics()
     .moveTo(0, 28)
     .lineTo(14, 58)
     .lineTo(28, 28)
     .closePath()
     .stroke({ width: 2.3, color: 0xffc18f, alpha: 0.95 });
 
-  const neonIce = new Graphics()
+  const iceNeonScoop = new Graphics()
     .circle(14, 19, 13)
     .stroke({ width: 2.4, color: 0xff87b3, alpha: 0.95 });
 
-  const neonGlow = new Graphics()
+  const iceNeonGlow = new Graphics()
     .circle(14, 24, 36)
     .fill({ color: 0xff6fa7, alpha: 0.05 });
 
-  neonCone.addChild(neonGlow, cone, neonIce);
+  iceNeonCone.addChild(iceNeonGlow, iceNeonConeShape, iceNeonScoop);
 
-  gsap.to(neonGlow, {
+  gsap.to(iceNeonGlow, {
     alpha: 0.14,
     duration: 1.3,
     repeat: -1,
@@ -1351,7 +1351,7 @@ iceCreamScene.addChild(kiosk);
   });
 
   // стойка и салфетки
-  kioskDetails.addChild(
+  iceDetailLayer.addChild(
     new Graphics()
       .roundRect(55, 478, 280, 14, 5)
       .fill(0x9c6c64)
@@ -1360,7 +1360,7 @@ iceCreamScene.addChild(kiosk);
   );
 
   // маленькая табличка
-  const kioskSign = new Text({
+  const iceSmallSign = new Text({
     text: "маленькие радости\nделают день особенным ♡",
     style: {
       fill: 0xe4b9c8,
@@ -1370,9 +1370,9 @@ iceCreamScene.addChild(kiosk);
       lineHeight: 14,
     },
   });
-  kioskSign.anchor.set(0.5);
-  kioskSign.position.set(312, 420);
-  kioskDetails.addChild(kioskSign);
+  iceSmallSign.anchor.set(0.5);
+  iceSmallSign.position.set(312, 420);
+  iceDetailLayer.addChild(iceSmallSign);
 
 
 const kioskBody = new Graphics()
@@ -1448,7 +1448,7 @@ flavors.forEach((color, i) => {
   item.x = -102 + i * 34;
   item.y = -68;
 
-  const cone = new Graphics()
+  const iceNeonConeShape = new Graphics()
     .moveTo(-8, 11)
     .lineTo(8, 11)
     .lineTo(0, 40)
