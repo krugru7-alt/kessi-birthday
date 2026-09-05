@@ -1284,6 +1284,31 @@ iceHint.anchor.set(0.5);
 iceHint.position.set(W / 2, 805);
 iceCreamScene.addChild(iceHint);
 
+// Надёжная полноэкранная зона перехода.
+// На телефоне не нужно попадать точно по маленькой надписи.
+const iceNextTap = new Graphics()
+  .rect(0, 0, W, H)
+  .fill({
+    color: 0xffffff,
+    alpha: 0.001,
+  });
+
+iceNextTap.eventMode = "none";
+iceNextTap.cursor = "pointer";
+iceCreamScene.addChild(iceNextTap);
+
+let leavingIceCream = false;
+
+function continueAfterIceCream() {
+  if (leavingIceCream) return;
+  leavingIceCream = true;
+
+  iceHint.eventMode = "none";
+  iceNextTap.eventMode = "none";
+
+  showSunsetScene();
+}
+
 // =====================================================
 // АНИМАЦИЯ СЦЕНЫ МОРОЖЕНОГО
 // =====================================================
@@ -1526,12 +1551,18 @@ function showIceCreamScene() {
   tl.call(() => {
     iceHint.eventMode = "static";
     iceHint.cursor = "pointer";
+    iceNextTap.eventMode = "static";
   }, null, 8.45);
+
+  // Если Даша ничего не нажмёт, сцена всё равно продолжится сама.
+  // Так подарок не может "застрять" на мороженом.
+  tl.call(() => {
+    continueAfterIceCream();
+  }, null, 11.2);
 }
 
-iceHint.on("pointertap", () => {
-  showSunsetScene();
-});
+iceHint.on("pointertap", continueAfterIceCream);
+iceNextTap.on("pointertap", continueAfterIceCream);
 
 
 // =====================================================
@@ -1621,6 +1652,7 @@ let photoTaken = false;
 
 function showSunsetScene() {
   iceHint.eventMode = "none";
+  iceNextTap.eventMode = "none";
   sunsetScene.visible = true;
 
   gsap.timeline()
