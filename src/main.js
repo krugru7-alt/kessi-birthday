@@ -588,6 +588,160 @@ async function start() {
   park.addChild(pathLight);
 
   // =====================================================
+  // ЖИВОЙ ПАРК: облака, клумбы, лавочка, светлячки, листья
+  // =====================================================
+
+  // мягкие облака на закате
+  const clouds = new Container();
+  park.addChild(clouds);
+
+  function addCloud(x, y, scale, alpha = 0.12) {
+    const c = new Graphics()
+      .ellipse(0, 0, 44, 13).fill({ color: 0xffd2d2, alpha })
+      .ellipse(-26, 2, 26, 9).fill({ color: 0xffd2d2, alpha: alpha * 0.9 })
+      .ellipse(28, 1, 31, 10).fill({ color: 0xffd2d2, alpha: alpha * 0.85 });
+    c.position.set(x, y);
+    c.scale.set(scale);
+    clouds.addChild(c);
+
+    gsap.to(c, {
+      x: x + 18,
+      duration: 18 + Math.random() * 8,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+  }
+
+  addCloud(78, 225, 0.85, 0.09);
+  addCloud(260, 285, 1.05, 0.08);
+  addCloud(170, 160, 0.62, 0.06);
+
+  // камни/блики на дорожке
+  const pathDetails = new Container();
+  park.addChild(pathDetails);
+
+  [
+    [173, 785, 16, 4],
+    [235, 748, 12, 3],
+    [188, 700, 10, 3],
+    [221, 658, 8, 2],
+    [194, 625, 6, 2],
+  ].forEach(([x, y, rx, ry]) => {
+    pathDetails.addChild(
+      new Graphics()
+        .ellipse(x, y, rx, ry)
+        .fill({ color: 0xe0a6a6, alpha: 0.08 })
+    );
+  });
+
+  // лавочка слева
+  const bench = new Container();
+  bench.position.set(28, 645);
+  park.addChild(bench);
+
+  bench.addChild(
+    new Graphics()
+      .roundRect(0, 0, 82, 8, 3).fill(0x442d31)
+      .roundRect(3, -18, 76, 7, 3).fill(0x4e3335)
+      .rect(10, 8, 5, 31).fill(0x17171b)
+      .rect(67, 8, 5, 31).fill(0x17171b)
+  );
+
+  // клумбы / трава
+  const greenery = new Container();
+  park.addChild(greenery);
+
+  function grassTuft(x, y, flip = 1) {
+    const g = new Graphics()
+      .moveTo(0, 0).lineTo(-6 * flip, -15).stroke({ width: 2, color: 0x31402f, alpha: 0.8 })
+      .moveTo(0, 0).lineTo(1 * flip, -19).stroke({ width: 2, color: 0x3d5038, alpha: 0.85 })
+      .moveTo(0, 0).lineTo(8 * flip, -13).stroke({ width: 2, color: 0x2f432f, alpha: 0.8 });
+    g.position.set(x, y);
+    greenery.addChild(g);
+  }
+
+  for (let i = 0; i < 18; i++) {
+    grassTuft(
+      i < 9 ? 20 + i * 12 : 292 + (i - 9) * 11,
+      620 + (i % 4) * 24,
+      i % 2 ? 1 : -1
+    );
+  }
+
+  // маленькие цветы, заметные только вблизи
+  [
+    [48, 650, 0xf2a2bd],
+    [85, 676, 0xf5d9a8],
+    [318, 640, 0xe9a3c3],
+    [350, 694, 0xffd59b],
+    [302, 720, 0xf4aec8],
+  ].forEach(([x, y, color]) => {
+    const flower = new Container();
+    flower.position.set(x, y);
+    flower.addChild(
+      new Graphics()
+        .circle(-3, 0, 3).fill({ color, alpha: 0.75 })
+        .circle(3, 0, 3).fill({ color, alpha: 0.75 })
+        .circle(0, -3, 3).fill({ color, alpha: 0.75 })
+        .circle(0, 2, 2).fill(0xffd67d)
+    );
+    greenery.addChild(flower);
+  });
+
+  // светлячки
+  const fireflies = new Container();
+  park.addChild(fireflies);
+
+  for (let i = 0; i < 14; i++) {
+    const f = new Graphics()
+      .circle(0, 0, 1.7)
+      .fill({ color: 0xffe39c, alpha: 0.75 });
+
+    const sx = 20 + Math.random() * 350;
+    const sy = 500 + Math.random() * 240;
+    f.position.set(sx, sy);
+    fireflies.addChild(f);
+
+    gsap.to(f, {
+      x: sx + (Math.random() * 24 - 12),
+      y: sy + (Math.random() * 20 - 10),
+      alpha: 0.15,
+      duration: 1.6 + Math.random() * 2.4,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      delay: Math.random() * 1.5,
+    });
+  }
+
+  // несколько падающих листьев на переднем плане
+  const parkLeaves = new Container();
+  park.addChild(parkLeaves);
+
+  for (let i = 0; i < 7; i++) {
+    const leaf = new Graphics()
+      .ellipse(0, 0, 6, 3)
+      .fill({
+        color: i % 2 ? 0xc77766 : 0x9d5f5d,
+        alpha: 0.38,
+      });
+
+    leaf.position.set(Math.random() * W, 350 + Math.random() * 330);
+    leaf.rotation = Math.random() * Math.PI;
+    parkLeaves.addChild(leaf);
+
+    gsap.to(leaf, {
+      x: "+=" + (30 + Math.random() * 45),
+      y: "+=" + (90 + Math.random() * 120),
+      rotation: "+=" + (1.5 + Math.random() * 2),
+      duration: 7 + Math.random() * 5,
+      repeat: -1,
+      ease: "none",
+    });
+  }
+
+  // =====================================================
   // ФОНАРИ
   // =====================================================
 
@@ -855,24 +1009,49 @@ park.addChild(
   dragon.root
 );
 
+// маленький знак между ними — визуально они идут рядом, как за ручку
+const togetherHeart = new Text({
+  text: "♡",
+  style: {
+    fill: 0xf4bfd2,
+    fontFamily: "Arial",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+});
+togetherHeart.anchor.set(0.5);
+togetherHeart.position.set(195, 650);
+togetherHeart.alpha = 0;
+park.addChild(togetherHeart);
+
 // =====================================================
 // ТЕКСТ "ТЫК"
 // =====================================================
 
+const walkHintBg = new Graphics()
+  .roundRect(-112, -27, 224, 54, 27)
+  .fill({ color: 0x17131d, alpha: 0.92 })
+  .stroke({ width: 1.4, color: 0xf3bfd2, alpha: 0.65 });
+
+walkHintBg.position.set(W / 2, 770);
+walkHintBg.alpha = 0;
+park.addChild(walkHintBg);
+
 const walkHint = new Text({
-  text: "тык, чтобы пойти ♡",
+  text: "ТЫК — ИДЁМ ГУЛЯТЬ ♡",
   style: {
-    fill: 0xf8d9e4,
+    fill: 0xffffff,
     fontFamily: "Arial",
     fontSize: 17,
-    fontWeight: "500",
+    fontWeight: "700",
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });
 
 walkHint.anchor.set(0.5);
-walkHint.position.set(W / 2, 790);
+walkHint.position.set(W / 2, 770);
 walkHint.alpha = 0;
-
 park.addChild(walkHint);
 
 // =====================================================
@@ -903,7 +1082,7 @@ function showCharacters() {
 
   tl.to(obsid.root, {
     alpha: 1,
-    x: 245,
+    x: 225,
     duration: 1.5,
     ease: "power2.out",
   });
@@ -915,7 +1094,7 @@ function showCharacters() {
     kessi.root,
     {
       alpha: 1,
-      x: 145,
+      x: 165,
       duration: 1.4,
       ease: "power2.out",
     },
@@ -949,13 +1128,18 @@ function showCharacters() {
   );
 
   tl.to(
-    walkHint,
+    [walkHintBg, walkHint],
     {
       alpha: 1,
       duration: 0.7,
     },
     2.3
   );
+
+  tl.to(togetherHeart, {
+    alpha: 0.75,
+    duration: 0.5,
+  }, 2.1);
 
   tl.call(() => {
     walkTap.eventMode = "static";
@@ -1268,20 +1452,29 @@ dragonBubble.addChild(
 iceCreamScene.addChild(dragonBubble);
 
 // подсказка внизу
+const iceHintBg = new Graphics()
+  .roundRect(-115, -27, 230, 54, 27)
+  .fill({ color: 0x17131d, alpha: 0.94 })
+  .stroke({ width: 1.4, color: 0xf3bfd2, alpha: 0.7 });
+iceHintBg.position.set(W / 2, 772);
+iceHintBg.alpha = 0;
+iceCreamScene.addChild(iceHintBg);
+
 const iceHint = new Text({
   text: "",
   style: {
-    fill: 0xf6d9e4,
+    fill: 0xffffff,
     fontFamily: "Arial",
-    fontSize: 16,
+    fontSize: 17,
+    fontWeight: "700",
     align: "center",
     wordWrap: true,
-    wordWrapWidth: 330,
+    wordWrapWidth: 210,
   },
 });
 
 iceHint.anchor.set(0.5);
-iceHint.position.set(W / 2, 805);
+iceHint.position.set(W / 2, 772);
 iceCreamScene.addChild(iceHint);
 
 // Надёжная полноэкранная зона перехода.
@@ -1531,18 +1724,18 @@ function showIceCreamScene() {
 
   // финальная маленькая пауза сцены
   tl.call(() => {
-    iceHint.text = "ну всё, идём дальше ♡";
+    iceHint.text = "ИДЁМ ДАЛЬШЕ ♡";
   }, null, 7.8);
 
   tl.fromTo(
-    iceHint,
+    [iceHintBg, iceHint],
     {
       alpha: 0,
-      y: 814,
+      y: 782,
     },
     {
       alpha: 1,
-      y: 805,
+      y: 772,
       duration: 0.6,
     },
     7.8
@@ -1621,12 +1814,12 @@ sunsetTitle.position.set(W / 2, 105);
 sunsetScene.addChild(sunsetTitle);
 
 const cameraButton = new Container();
-cameraButton.position.set(W / 2, 785);
+cameraButton.position.set(W / 2, 756);
 cameraButton.eventMode = "static";
 cameraButton.cursor = "pointer";
 
 const cameraBg = new Graphics()
-  .roundRect(-92, -25, 184, 50, 25)
+  .roundRect(-108, -28, 216, 56, 28)
   .fill({ color: 0x17131d, alpha: 0.82 })
   .stroke({ width: 1, color: 0xf3c3d4, alpha: 0.55 });
 
@@ -1749,20 +1942,95 @@ movieTitle.anchor.set(0.5);
 movieTitle.position.set(W / 2, 190);
 cinemaScene.addChild(movieTitle);
 
-// билеты
-for (let i = 0; i < 2; i++) {
-  const ticket = new Graphics()
-    .roundRect(95 + i * 95, 265, 78, 38, 8)
-    .fill(0xf1d9d1);
-  cinemaScene.addChild(ticket);
+// настоящий кино-билет
+const realTicket = new Container();
+realTicket.position.set(46, 250);
+cinemaScene.addChild(realTicket);
+
+// основная часть билета
+const ticketBody = new Graphics()
+  .roundRect(0, 0, 298, 118, 12)
+  .fill(0xf3e6dc)
+  .stroke({ width: 1.3, color: 0xc9aeb2, alpha: 0.85 });
+
+// отрывная часть справа
+const ticketStub = new Graphics()
+  .roundRect(238, 0, 60, 118, 12)
+  .fill(0xe9d2ca);
+
+realTicket.addChild(ticketBody, ticketStub);
+
+// пунктир перфорации
+for (let y = 10; y < 110; y += 10) {
+  realTicket.addChild(
+    new Graphics()
+      .rect(236, y, 2, 5)
+      .fill({ color: 0x9e7f84, alpha: 0.55 })
+  );
 }
-const ticketText = new Text({
-  text: "2 билета",
-  style: { fill: 0x33242b, fontSize: 14, fontFamily: "Arial" },
+
+const ticketBrand = new Text({
+  text: "CINEMA NIGHT",
+  style: {
+    fill: 0x9c244d,
+    fontFamily: "Arial",
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 1.3,
+  },
 });
-ticketText.anchor.set(0.5);
-ticketText.position.set(W / 2, 284);
-cinemaScene.addChild(ticketText);
+ticketBrand.position.set(16, 12);
+realTicket.addChild(ticketBrand);
+
+const ticketMovie = new Text({
+  text: "РАПУНЦЕЛЬ",
+  style: {
+    fill: 0x2c2026,
+    fontFamily: "Arial",
+    fontSize: 22,
+    fontWeight: "800",
+  },
+});
+ticketMovie.position.set(16, 34);
+realTicket.addChild(ticketMovie);
+
+const ticketInfo = new Text({
+  text: "05.09.2026   •   20:30\nЗАЛ 2   •   РЯД 5   •   МЕСТА 7–8",
+  style: {
+    fill: 0x5d474e,
+    fontFamily: "Arial",
+    fontSize: 11,
+    lineHeight: 19,
+    fontWeight: "600",
+  },
+});
+ticketInfo.position.set(16, 67);
+realTicket.addChild(ticketInfo);
+
+// псевдо-штрихкод
+for (let i = 0; i < 16; i++) {
+  const bw = i % 3 === 0 ? 3 : 1.5;
+  realTicket.addChild(
+    new Graphics()
+      .rect(251 + i * 2.1, 23, bw, 48)
+      .fill(0x2b2226)
+  );
+}
+
+const ticketStubText = new Text({
+  text: "2\nБИЛЕТА",
+  style: {
+    fill: 0x7d2546,
+    fontFamily: "Arial",
+    fontSize: 12,
+    fontWeight: "800",
+    align: "center",
+    lineHeight: 18,
+  },
+});
+ticketStubText.anchor.set(0.5);
+ticketStubText.position.set(268, 91);
+realTicket.addChild(ticketStubText);
 
 // дракоша внезапно приносит третий
 const cinemaDragon = createDragon();
@@ -1770,9 +2038,28 @@ cinemaDragon.root.position.set(310, 430);
 cinemaDragon.root.scale.set(0.9);
 cinemaScene.addChild(cinemaDragon.root);
 
-const thirdTicket = new Graphics()
-  .roundRect(-24, -118, 48, 26, 6)
-  .fill(0xf1d9d1);
+const thirdTicket = new Container();
+thirdTicket.position.set(0, -112);
+
+const thirdTicketBody = new Graphics()
+  .roundRect(-31, -17, 62, 34, 6)
+  .fill(0xf3e6dc)
+  .stroke({ width: 1, color: 0xc99dad, alpha: 0.8 });
+thirdTicket.addChild(thirdTicketBody);
+
+const thirdTicketText = new Text({
+  text: "БИЛЕТ\n№3",
+  style: {
+    fill: 0x792542,
+    fontFamily: "Arial",
+    fontSize: 9,
+    fontWeight: "800",
+    align: "center",
+  },
+});
+thirdTicketText.anchor.set(0.5);
+thirdTicket.addChild(thirdTicketText);
+
 cinemaDragon.root.addChild(thirdTicket);
 
 const dragonCinemaBubble = new Container();
@@ -1823,12 +2110,24 @@ const snackText = new Text({
 snackText.position.set(15, 38);
 snacks.addChild(snackText);
 
+const cinemaHintBg = new Graphics()
+  .roundRect(-112, -27, 224, 54, 27)
+  .fill({ color: 0x211723, alpha: 0.96 })
+  .stroke({ width: 1.4, color: 0xf2bfd2, alpha: 0.72 });
+cinemaHintBg.position.set(W / 2, 746);
+cinemaScene.addChild(cinemaHintBg);
+
 const cinemaHint = new Text({
-  text: "тык, заходим",
-  style: { fill: 0xf5d1df, fontSize: 17, fontFamily: "Arial" },
+  text: "ЗАХОДИМ В ЗАЛ  ›",
+  style: {
+    fill: 0xffffff,
+    fontSize: 17,
+    fontFamily: "Arial",
+    fontWeight: "800",
+  },
 });
 cinemaHint.anchor.set(0.5);
-cinemaHint.position.set(W / 2, 760);
+cinemaHint.position.set(W / 2, 746);
 cinemaHint.eventMode = "static";
 cinemaHint.cursor = "pointer";
 cinemaScene.addChild(cinemaHint);
@@ -2111,12 +2410,20 @@ const miniLid = new Graphics()
   .fill(0xffeeee);
 miniGift.addChild(miniBox, miniRibbon, miniLid);
 
+const miniTagBg = new Graphics()
+  .roundRect(-78, -24, 156, 48, 24)
+  .fill({ color: 0x211723, alpha: 0.94 })
+  .stroke({ width: 1.2, color: 0xf2bfd2, alpha: 0.7 });
+miniTagBg.position.set(W / 2, 570);
+finalScene.addChild(miniTagBg);
+
 const miniTag = new Text({
-  text: "тык ♡",
+  text: "ОТКРЫТЬ ♡",
   style: {
     fill: 0xffffff,
     fontSize: 17,
     fontFamily: "Arial",
+    fontWeight: "800",
   },
 });
 miniTag.anchor.set(0.5);
@@ -2220,7 +2527,7 @@ miniGift.on("pointertap", () => {
       scaleY: 1.8,
       duration: 0.7,
     }, 0.55)
-    .to(miniTag, { alpha: 0, duration: 0.3 }, 0.5)
+    .to([miniTagBg, miniTag], { alpha: 0, duration: 0.3 }, 0.5)
     .to(photoCard, {
       alpha: 1,
       scaleX: 1,
@@ -2347,7 +2654,7 @@ walkTap.on("pointertap", () => {
   walking = true;
   walkTap.eventMode = "none";
 
-  gsap.to(walkHint, {
+  gsap.to([walkHintBg, walkHint], {
     alpha: 0,
     duration: 0.35,
   });
@@ -2360,68 +2667,99 @@ walkTap.on("pointertap", () => {
   startLegAnimation(kessi);
   startLegAnimation(obsid);
 
-  // герои идут вперёд
+  // Они идут медленно и синхронно — не бегут к следующей сцене.
+  // Расстояние между ними минимальное, будто гуляют за руку.
+  const WALK_TIME = 7.8;
+
   gsap.to(kessi.root, {
-    y: 620,
-    x: 172,
+    y: 615,
+    x: 180,
     scaleX: 0.82,
     scaleY: 0.82,
-    duration: 4,
-    ease: "power1.inOut",
+    duration: WALK_TIME,
+    ease: "sine.inOut",
   });
 
   gsap.to(obsid.root, {
-    y: 620,
-    x: 222,
+    y: 615,
+    x: 213,
     scaleX: 0.82,
     scaleY: 0.82,
-    duration: 4,
-    ease: "power1.inOut",
+    duration: WALK_TIME,
+    ease: "sine.inOut",
   });
 
-  // дракоша сначала отстаёт
-  gsap.to(dragon.root, {
-    y: 705,
-    duration: 1,
-    delay: 0.8,
-    ease: "power1.inOut",
+  gsap.to(togetherHeart, {
+    x: 197,
+    y: 552,
+    scaleX: 0.82,
+    scaleY: 0.82,
+    duration: WALK_TIME,
+    ease: "sine.inOut",
   });
 
-  // потом резко догоняет
+  // лёгкое общее покачивание шага
+  gsap.to([kessi.root, obsid.root], {
+    rotation: 0.012,
+    duration: 0.55,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+  });
+
+  // Дракоша сначала засматривается по сторонам...
   gsap.to(dragon.root, {
-    x: 275,
-    y: 630,
+    y: 710,
+    x: 315,
+    duration: 2.1,
+    delay: 1,
+    ease: "sine.inOut",
+  });
+
+  // ...а потом догоняет, но уже не как ракета
+  gsap.to(dragon.root, {
+    x: 262,
+    y: 625,
     scaleX: 0.72,
     scaleY: 0.72,
-    duration: 1.5,
-    delay: 1.8,
-    ease: "back.out(1.4)",
+    duration: 3.2,
+    delay: 3.4,
+    ease: "power1.inOut",
   });
 
-  // движение камеры
+  // Камера двигается очень мягко вместе с ними
   gsap.to(path.scale, {
-    x: 1.08,
-    y: 1.05,
-    duration: 4,
-    ease: "power1.inOut",
+    x: 1.045,
+    y: 1.03,
+    duration: WALK_TIME,
+    ease: "sine.inOut",
   });
 
   gsap.to(foreground, {
-    x: -18,
-    duration: 4,
-    ease: "power1.inOut",
+    x: -11,
+    duration: WALK_TIME,
+    ease: "sine.inOut",
   });
 
   gsap.to(city, {
-    x: 10,
-    duration: 4,
-    ease: "power1.inOut",
+    x: 5,
+    duration: WALK_TIME,
+    ease: "sine.inOut",
   });
 
-  // дошли — переходим к мороженому
-  gsap.delayedCall(4.15, () => {
+  gsap.to(fireflies, {
+    x: -6,
+    duration: WALK_TIME,
+    ease: "sine.inOut",
+  });
+
+  // дошли — только после полноценной прогулки переходим к мороженому
+  gsap.delayedCall(WALK_TIME + 0.25, () => {
     stopLegAnimation(kessi);
     stopLegAnimation(obsid);
+    gsap.killTweensOf(kessi.root);
+    gsap.killTweensOf(obsid.root);
+    gsap.to(togetherHeart, { alpha: 0, duration: 0.35 });
     showIceCreamScene();
   });
 });
