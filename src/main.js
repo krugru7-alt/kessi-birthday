@@ -1067,7 +1067,7 @@ walkHintBg.alpha = 0;
 park.addChild(walkHintBg);
 
 const walkHint = new Text({
-  text: "ТЫК — ИДЁМ ГУЛЯТЬ ♡",
+  text: "Ручку? пойдем ♡",
   style: {
     fill: 0xffffff,
     fontFamily: "Arial",
@@ -1526,7 +1526,7 @@ plant.addChild(
 
 // мелкая надпись на корпусе
 const smallKioskText = new Text({
-  text: "вечер + мороженое = хороший план ♡",
+  text: "Потому что мы пломбиристы ♡",
   style: {
     fill: 0xf0d9dc,
     fontFamily: "Arial",
