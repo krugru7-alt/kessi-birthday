@@ -1,7 +1,10 @@
 import {
   Application,
+  Assets,
+  AnimatedSprite,
   Container,
   Graphics,
+  Sprite,
   Text,
 } from "pixi.js";
 
@@ -40,6 +43,32 @@ async function start() {
   app.canvas.style.touchAction = "none";
 
   document.body.appendChild(app.canvas);
+
+  // =====================================================
+  // СПРАЙТЫ ПЕРСОНАЖЕЙ
+  // Файлы лежат в public/sprites/
+  // =====================================================
+
+  const spritePaths = {
+    obsidIdle: "/sprites/obsid_idle.png",
+    obsidWalk1: "/sprites/obsid_walk1.png",
+    obsidWalk2: "/sprites/obsid_walk2.png",
+
+    kessiIdle: "/sprites/kessi_idle.png",
+    kessiWalk1: "/sprites/kessi_walk1.png",
+    kessiWalk2: "/sprites/kessi_walk2.png",
+
+    dragonIdle: "/sprites/dragon_idle.png",
+    dragonWalk1: "/sprites/dragon_walk1.png",
+    dragonWalk2: "/sprites/dragon_walk2.png",
+    dragonIcecream: "/sprites/dragon_icecream.png",
+  };
+
+  const spriteTextures = {};
+
+  for (const [name, url] of Object.entries(spritePaths)) {
+    spriteTextures[name] = await Assets.load(url);
+  }
 
   // =====================================================
   // ОСНОВНАЯ СЦЕНА 390x844
@@ -684,219 +713,122 @@ async function start() {
 
   park.addChild(parkText);
   // =====================================================
-// ПЕРСОНАЖИ
+// ПЕРСОНАЖИ — PNG-СПРАЙТЫ
 // =====================================================
 
-function createKessi() {
-  const c = new Container();
+function fitSpriteHeight(sprite, height) {
+  const textureHeight = sprite.texture?.height || 1;
+  const scale = height / textureHeight;
+  sprite.scale.set(scale);
+}
 
-  // ноги
-  const leg1 = new Graphics()
-    .roundRect(-13, 42, 9, 34, 5)
-    .fill(0x17131c);
+function createSpriteCharacter({
+  idleTexture,
+  walkTextures,
+  height,
+  walkSpeed = 0.12,
+}) {
+  const root = new Container();
 
-  const leg2 = new Graphics()
-    .roundRect(4, 42, 9, 34, 5)
-    .fill(0x17131c);
+  // Обычная стойка
+  const idle = new Sprite(idleTexture);
+  idle.anchor.set(0.5, 1);
+  fitSpriteHeight(idle, height);
+  root.addChild(idle);
 
-  // тело
-  const body = new Graphics()
-    .roundRect(-25, -3, 50, 56, 18)
-    .fill(0xf2e8ec);
-
-  // голова
-  const head = new Graphics()
-    .circle(0, -31, 25)
-    .fill(0xf3c7b3);
-
-  // волосы
-  const hairBack = new Graphics()
-    .ellipse(0, -23, 31, 39)
-    .fill(0x17131b);
-
-  hairBack.zIndex = -1;
-
-  const hairTop = new Graphics()
-    .arc(0, -32, 26, Math.PI, Math.PI * 2)
-    .lineTo(24, -19)
-    .lineTo(-24, -19)
-    .closePath()
-    .fill(0x19131b);
-
-  // глаза
-  const eyeL = new Graphics()
-    .circle(-8, -31, 3)
-    .fill(0x6ba9e8);
-
-  const eyeR = new Graphics()
-    .circle(8, -31, 3)
-    .fill(0x6ba9e8);
-
-  // улыбка
-  const smile = new Graphics()
-    .moveTo(-5, -19)
-    .quadraticCurveTo(0, -15, 5, -19)
-    .stroke({
-      width: 1.4,
-      color: 0x8c4b56,
-    });
-
-  c.sortableChildren = true;
-
-  c.addChild(
-    hairBack,
-    leg1,
-    leg2,
-    body,
-    head,
-    hairTop,
-    eyeL,
-    eyeR,
-    smile
-  );
+  // Ходьба из двух PNG-кадров
+  const walk = new AnimatedSprite(walkTextures);
+  walk.anchor.set(0.5, 1);
+  fitSpriteHeight(walk, height);
+  walk.animationSpeed = walkSpeed;
+  walk.loop = true;
+  walk.visible = false;
+  root.addChild(walk);
 
   return {
-    root: c,
-    leg1,
-    leg2,
+    root,
+    idle,
+    walk,
+
+    startWalk() {
+      idle.visible = false;
+      walk.visible = true;
+      walk.gotoAndPlay(0);
+    },
+
+    stopWalk() {
+      walk.stop();
+      walk.visible = false;
+      idle.visible = true;
+    },
   };
+}
+
+function createKessi() {
+  return createSpriteCharacter({
+    idleTexture: spriteTextures.kessiIdle,
+    walkTextures: [
+      spriteTextures.kessiWalk1,
+      spriteTextures.kessiWalk2,
+    ],
+    height: 150,
+    walkSpeed: 0.11,
+  });
 }
 
 function createObsid() {
-  const c = new Container();
-
-  // ноги
-  const leg1 = new Graphics()
-    .roundRect(-14, 45, 10, 36, 5)
-    .fill(0x111117);
-
-  const leg2 = new Graphics()
-    .roundRect(4, 45, 10, 36, 5)
-    .fill(0x111117);
-
-  // худи
-  const body = new Graphics()
-    .roundRect(-28, -5, 56, 61, 18)
-    .fill(0x202027);
-
-  // голова
-  const head = new Graphics()
-    .circle(0, -34, 26)
-    .fill(0xe2b49e);
-
-  // кепка
-  const cap = new Graphics()
-    .arc(0, -39, 27, Math.PI, Math.PI * 2)
-    .lineTo(26, -30)
-    .lineTo(-26, -30)
-    .closePath()
-    .fill(0x111116);
-
-  const visor = new Graphics()
-    .ellipse(14, -31, 22, 5)
-    .fill(0x101015);
-
-  // глаза
-  const eyeL = new Graphics()
-    .circle(-8, -34, 2.3)
-    .fill(0x282329);
-
-  const eyeR = new Graphics()
-    .circle(8, -34, 2.3)
-    .fill(0x282329);
-
-  c.addChild(
-    leg1,
-    leg2,
-    body,
-    head,
-    cap,
-    visor,
-    eyeL,
-    eyeR
-  );
-
-  return {
-    root: c,
-    leg1,
-    leg2,
-  };
+  return createSpriteCharacter({
+    idleTexture: spriteTextures.obsidIdle,
+    walkTextures: [
+      spriteTextures.obsidWalk1,
+      spriteTextures.obsidWalk2,
+    ],
+    height: 165,
+    walkSpeed: 0.11,
+  });
 }
 
 function createDragon() {
-  const c = new Container();
+  const character = createSpriteCharacter({
+    idleTexture: spriteTextures.dragonIdle,
+    walkTextures: [
+      spriteTextures.dragonWalk1,
+      spriteTextures.dragonWalk2,
+    ],
+    height: 92,
+    walkSpeed: 0.14,
+  });
 
-  // хвост
-  const tail = new Graphics()
-    .moveTo(20, 12)
-    .quadraticCurveTo(42, 12, 38, -5)
-    .quadraticCurveTo(34, 8, 23, 5)
-    .fill(0x1d2128);
+  // Отдельный кадр Дракоши с мороженым —
+  // пригодится в сцене у киоска.
+  const icecream = new Sprite(spriteTextures.dragonIcecream);
+  icecream.anchor.set(0.5, 1);
+  fitSpriteHeight(icecream, 96);
+  icecream.visible = false;
+  character.root.addChild(icecream);
+  character.icecream = icecream;
 
-  // тело
-  const body = new Graphics()
-    .ellipse(0, 8, 23, 18)
-    .fill(0x242932);
-
-  // голова
-  const head = new Graphics()
-    .circle(0, -12, 18)
-    .fill(0x2a3039);
-
-  // рожки
-  const horn1 = new Graphics()
-    .moveTo(-12, -26)
-    .lineTo(-6, -40)
-    .lineTo(-2, -24)
-    .fill(0x171b22);
-
-  const horn2 = new Graphics()
-    .moveTo(12, -26)
-    .lineTo(7, -40)
-    .lineTo(2, -24)
-    .fill(0x171b22);
-
-  // глаза
-  const eyeL = new Graphics()
-    .circle(-6, -12, 3)
-    .fill(0xf4c568);
-
-  const eyeR = new Graphics()
-    .circle(6, -12, 3)
-    .fill(0xf4c568);
-
-  // крылья
-  const wingL = new Graphics()
-    .moveTo(-17, 1)
-    .lineTo(-37, -8)
-    .lineTo(-25, 13)
-    .closePath()
-    .fill(0x343b46);
-
-  const wingR = new Graphics()
-    .moveTo(17, 1)
-    .lineTo(37, -8)
-    .lineTo(25, 13)
-    .closePath()
-    .fill(0x343b46);
-
-  c.addChild(
-    tail,
-    wingL,
-    wingR,
-    body,
-    head,
-    horn1,
-    horn2,
-    eyeL,
-    eyeR
-  );
-
-  return {
-    root: c,
-    wingL,
-    wingR,
+  character.showIcecream = () => {
+    character.walk.stop();
+    character.walk.visible = false;
+    character.idle.visible = false;
+    character.icecream.visible = true;
   };
+
+  character.showIdle = () => {
+    character.icecream.visible = false;
+    character.walk.stop();
+    character.walk.visible = false;
+    character.idle.visible = true;
+  };
+
+  const originalStartWalk = character.startWalk;
+  character.startWalk = () => {
+    character.icecream.visible = false;
+    originalStartWalk();
+  };
+
+  return character;
 }
 
 // =====================================================
@@ -911,7 +843,7 @@ kessi.root.position.set(145, 730);
 obsid.root.position.set(245, 730);
 
 dragon.root.position.set(320, 755);
-dragon.root.scale.set(0.7);
+dragon.root.scale.set(1);
 
 kessi.root.alpha = 0;
 obsid.root.alpha = 0;
@@ -1031,58 +963,16 @@ function showCharacters() {
 }
 
 // =====================================================
-// МИНИ-АНИМАЦИЯ ХОДЬБЫ
+// АНИМАЦИЯ ХОДЬБЫ СПРАЙТОВ
 // =====================================================
 
 function startLegAnimation(character) {
-  gsap.to(character.leg1, {
-    rotation: 0.18,
-    duration: 0.24,
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut",
-  });
-
-  gsap.to(character.leg2, {
-    rotation: -0.18,
-    duration: 0.24,
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut",
-  });
+  character.startWalk();
 }
 
 function stopLegAnimation(character) {
-  gsap.killTweensOf(character.leg1);
-  gsap.killTweensOf(character.leg2);
-
-  gsap.to(character.leg1, {
-    rotation: 0,
-    duration: 0.15,
-  });
-
-  gsap.to(character.leg2, {
-    rotation: 0,
-    duration: 0.15,
-  });
+  character.stopWalk();
 }
-
-// крылья дракоши постоянно чуть шевелятся
-gsap.to(dragon.wingL, {
-  rotation: -0.22,
-  duration: 0.45,
-  repeat: -1,
-  yoyo: true,
-  ease: "sine.inOut",
-});
-
-gsap.to(dragon.wingR, {
-  rotation: 0.22,
-  duration: 0.45,
-  repeat: -1,
-  yoyo: true,
-  ease: "sine.inOut",
-});
 
 // =====================================================
 // СЦЕНА 3 — КИОСК С МОРОЖЕНЫМ
@@ -1307,7 +1197,7 @@ const iceDragon = createDragon();
 iceKessi.root.position.set(125, 710);
 iceObsid.root.position.set(245, 710);
 iceDragon.root.position.set(320, 735);
-iceDragon.root.scale.set(0.68);
+iceDragon.root.scale.set(1);
 
 iceCreamScene.addChild(
   iceKessi.root,
@@ -1319,7 +1209,7 @@ iceCreamScene.addChild(
 const heldPlombir = new Container();
 heldPlombir.alpha = 0;
 heldPlombir.scale.set(0.9);
-heldPlombir.position.set(-28, 5);
+heldPlombir.position.set(-46, -92);
 
 const heldCone = new Graphics()
   .moveTo(-7, 7)
@@ -1535,8 +1425,8 @@ function showIceCreamScene() {
   tl.to(
     heldPlombir,
     {
-      x: -48,
-      y: -4,
+      x: -66,
+      y: -94,
       rotation: -0.14,
       duration: 0.55,
       ease: "power2.out",
@@ -1597,6 +1487,23 @@ function showIceCreamScene() {
     7.4
   );
 
+  // И, конечно, Дракоша тоже каким-то образом
+  // уже оказался с мороженым :)
+  tl.call(() => {
+    iceDragon.showIcecream();
+  }, null, 7.55);
+
+  tl.to(
+    iceDragon.root,
+    {
+      y: iceDragon.root.y - 7,
+      duration: 0.18,
+      repeat: 1,
+      yoyo: true,
+    },
+    7.55
+  );
+
   // финальная маленькая пауза сцены
   tl.call(() => {
     iceHint.text = "ну всё, идём дальше ♡";
@@ -1646,8 +1553,8 @@ walkTap.on("pointertap", () => {
   gsap.to(kessi.root, {
     y: 620,
     x: 172,
-    scaleX: 0.78,
-    scaleY: 0.78,
+    scaleX: 0.82,
+    scaleY: 0.82,
     duration: 4,
     ease: "power1.inOut",
   });
@@ -1655,8 +1562,8 @@ walkTap.on("pointertap", () => {
   gsap.to(obsid.root, {
     y: 620,
     x: 222,
-    scaleX: 0.78,
-    scaleY: 0.78,
+    scaleX: 0.82,
+    scaleY: 0.82,
     duration: 4,
     ease: "power1.inOut",
   });
@@ -1673,8 +1580,8 @@ walkTap.on("pointertap", () => {
   gsap.to(dragon.root, {
     x: 275,
     y: 630,
-    scaleX: 0.58,
-    scaleY: 0.58,
+    scaleX: 0.72,
+    scaleY: 0.72,
     duration: 1.5,
     delay: 1.8,
     ease: "back.out(1.4)",
